@@ -10,9 +10,11 @@ import SettingsLayout from '@/layouts/settings/layout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
 import { Upload, X } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface PosSettingsProps {
     settings: {
+        app_name: string;
         tax_rate: number;
         store_name: string;
         store_address: string;
@@ -29,19 +31,20 @@ interface PosSettingsProps {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'POS settings',
-        href: '/settings/pos',
-    },
-];
-
 export default function PosSettings({ settings }: PosSettingsProps) {
     const { t } = useTranslation();
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('settings.pos_settings'),
+            href: '/settings/pos',
+        },
+    ];
+
     const [logoPreview, setLogoPreview] = useState<string | null>(settings.receipt_logo || null);
     const [uploading, setUploading] = useState(false);
 
     const { data, setData, put, processing, errors } = useForm({
+        app_name: settings.app_name || '',
         tax_rate: settings.tax_rate || 0,
         store_name: settings.store_name || '',
         store_address: settings.store_address || '',
@@ -83,7 +86,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
             setLogoPreview(result.url);
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Failed to upload logo.');
+            alert(t('common_errors.upload_logo_failed'));
         } finally {
             setUploading(false);
         }
@@ -104,16 +107,43 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                 <div className="space-y-6">
                     <HeadingSmall
                         title={t('settings.pos_settings')}
-                        description={t('settings.pos_settings')}
+                        description={t('settings.pos_settings_description')}
                     />
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Application Settings */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('settings.app_name')}</CardTitle>
+                                <CardDescription>
+                                    {t('settings.app_name_description')}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <Label>{t('settings.app_name')} *</Label>
+                                    <Input
+                                        value={data.app_name}
+                                        onChange={(e) => setData('app_name', e.target.value)}
+                                        placeholder={t('settings.app_name_placeholder')}
+                                        required
+                                    />
+                                    {errors.app_name && (
+                                        <p className="text-sm text-destructive mt-1">{errors.app_name}</p>
+                                    )}
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        {t('settings.app_name_description')}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         {/* Tax Settings */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('settings.tax_rate')}</CardTitle>
                                 <CardDescription>
-                                    {t('settings.tax_rate')}
+                                    {t('settings.tax_rate_description')}
                                 </CardDescription>
                             </CardHeader>
                         <CardContent className="space-y-4">
@@ -131,7 +161,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                     <p className="text-sm text-destructive mt-1">{errors.tax_rate}</p>
                                 )}
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    {t('settings.tax_rate')}
+                                    {t('settings.tax_rate_description')}
                                 </p>
                             </div>
                         </CardContent>
@@ -142,7 +172,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                             <CardHeader>
                                 <CardTitle>{t('settings.store_name')}</CardTitle>
                                 <CardDescription>
-                                    {t('settings.store_name')}
+                                    {t('settings.store_name_description')}
                                 </CardDescription>
                             </CardHeader>
                         <CardContent className="space-y-4">
@@ -151,6 +181,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                 <Input
                                     value={data.store_name}
                                     onChange={(e) => setData('store_name', e.target.value)}
+                                    placeholder={t('settings.store_name_placeholder')}
                                     required
                                 />
                                 {errors.store_name && (
@@ -163,6 +194,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                     className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
                                     value={data.store_address}
                                     onChange={(e) => setData('store_address', e.target.value)}
+                                    placeholder={t('settings.store_address_placeholder')}
                                     rows={3}
                                 />
                                 {errors.store_address && (
@@ -175,6 +207,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                     <Input
                                         value={data.store_phone}
                                         onChange={(e) => setData('store_phone', e.target.value)}
+                                        placeholder={t('settings.store_phone_placeholder')}
                                     />
                                     {errors.store_phone && (
                                         <p className="text-sm text-destructive mt-1">{errors.store_phone}</p>
@@ -186,6 +219,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                         type="email"
                                         value={data.store_email}
                                         onChange={(e) => setData('store_email', e.target.value)}
+                                        placeholder={t('settings.store_email_placeholder')}
                                     />
                                     {errors.store_email && (
                                         <p className="text-sm text-destructive mt-1">{errors.store_email}</p>
@@ -196,11 +230,12 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                     </Card>
 
                         {/* Receipt Settings */}
+                        <HeadingSmall title={t('settings.receipt_settings')} />
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('settings.receipt_header')}</CardTitle>
+                                <CardTitle>{t('settings.receipt_settings')}</CardTitle>
                                 <CardDescription>
-                                    {t('settings.receipt_header')}
+                                    {t('settings.receipt_settings')}
                                 </CardDescription>
                             </CardHeader>
                         <CardContent className="space-y-4">
@@ -256,7 +291,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                 <Input
                                     value={data.receipt_header}
                                     onChange={(e) => setData('receipt_header', e.target.value)}
-                                    placeholder="Thank you for your purchase!"
+                                    placeholder={t('receipt.default_header')}
                                 />
                                 {errors.receipt_header && (
                                     <p className="text-sm text-destructive mt-1">{errors.receipt_header}</p>
@@ -267,7 +302,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                 <Input
                                     value={data.receipt_footer}
                                     onChange={(e) => setData('receipt_footer', e.target.value)}
-                                    placeholder="Have a great day!"
+                                    placeholder={t('receipt.default_footer')}
                                 />
                                 {errors.receipt_footer && (
                                     <p className="text-sm text-destructive mt-1">{errors.receipt_footer}</p>
@@ -304,6 +339,9 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                             </div>
                         </CardContent>
                     </Card>
+
+                        {/* Currency & Notifications */}
+                        <HeadingSmall title={t('settings.currency_and_notifications')} />
 
                         {/* Notification Settings */}
                         <Card>

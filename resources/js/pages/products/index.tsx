@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback, memo, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import { formatPrice } from '@/lib/currency';
 import Pagination from '@/components/pagination';
 import { useTranslation } from '@/hooks/use-translation';
+import { useDebounce } from '@/hooks/use-debounce';
+import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 
 interface Product {
     id: number;
@@ -53,7 +55,9 @@ export default function ProductsIndex({ products, categories, filters }: Product
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
-
+    const [searchInput, setSearchInput] = useState(filters.search || '');
+    const debouncedSearch = useDebounce(searchInput, 500);
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, put, processing, errors, reset } = useForm({
         name: '',
@@ -122,11 +126,25 @@ export default function ProductsIndex({ products, categories, filters }: Product
             setImagePreview(result.url);
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Failed to upload image.');
+            alert(t('common_errors.upload_image_failed'));
         } finally {
             setUploading(false);
         }
     };
+
+    // Debounced search effect
+    useEffect(() => {
+        if (debouncedSearch !== filters.search) {
+            router.get('/products', {
+                search: debouncedSearch || undefined,
+                category_id: filters.category_id,
+                low_stock: filters.low_stock,
+            }, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
+    }, [debouncedSearch, filters.category_id, filters.low_stock]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -148,6 +166,58 @@ export default function ProductsIndex({ products, categories, filters }: Product
             });
         }
     };
+
+    // Keyboard shortcuts for products page
+    useKeyboardShortcut([
+        {
+            key: 'n',
+            ctrl: true,
+            callback: () => {
+                if (!showDialog) {
+                    openDialog();
+                }
+            },
+            description: t('shortcuts.new_product'),
+        },
+        {
+            key: 's',
+            ctrl: true,
+            callback: (e) => {
+                if (showDialog && !processing) {
+                    e.preventDefault();
+                    handleSubmit(e as any);
+                }
+            },
+            description: t('shortcuts.save'),
+        },
+        {
+            key: '/',
+            callback: () => {
+                if (!showDialog) {
+                    searchInputRef.current?.focus();
+                    searchInputRef.current?.select();
+                }
+            },
+            description: t('shortcuts.focus_search'),
+        },
+        {
+            key: 'Delete',
+            callback: () => {
+                if (selectedProducts.length > 0 && !showDialog) {
+                    if (confirm(`${t('products.bulk_delete')} ${selectedProducts.length} ${t('products.products')}`)) {
+                        router.post('/products/bulk-delete', {
+                            ids: selectedProducts,
+                        }, {
+                            onSuccess: () => {
+                                setSelectedProducts([]);
+                            },
+                        });
+                    }
+                }
+            },
+            description: t('shortcuts.delete_selected'),
+        },
+    ], !showDialog);
 
     return (
         <AppLayout breadcrumbs={[{ title: t('nav.products'), href: '/products' }]}>
@@ -206,9 +276,10 @@ export default function ProductsIndex({ products, categories, filters }: Product
                             <Download className="mr-2 h-4 w-4" />
                             {t('products.export_csv')}
                         </Button>
-                        <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90">
+                        <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90" title={t('shortcuts.new_product') + ' (Ctrl+N)'}>
                             <Plus className="mr-2 h-4 w-4" />
-                            Add Product
+                            <span>{t('products.add_product')}</span>
+                            <span className="ml-2 text-xs opacity-70">(Ctrl+N)</span>
                         </Button>
                     </div>
                 </div>
@@ -220,18 +291,12 @@ export default function ProductsIndex({ products, categories, filters }: Product
                             <div className="flex-1 relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder={t('products.search_products')}
+                                    ref={searchInputRef}
+                                    placeholder={`${t('products.search_products')} (${t('shortcuts.focus_search')}: /)`}
                                     className="pl-10"
-                                    defaultValue={filters.search}
+                                    value={searchInput}
                                     onChange={(e) => {
-                                        router.get('/products', {
-                                            search: e.target.value,
-                                            category_id: filters.category_id,
-                                            low_stock: filters.low_stock,
-                                        }, {
-                                            preserveState: true,
-                                            preserveScroll: true,
-                                        });
+                                        setSearchInput(e.target.value);
                                     }}
                                 />
                             </div>
@@ -603,8 +668,8 @@ export default function ProductsIndex({ products, categories, filters }: Product
                                 <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                                     {t('common.cancel')}
                                 </Button>
-                                <Button type="submit" disabled={processing}>
-                                    {editingProduct ? t('common.update') : t('common.create')}
+                                <Button type="submit" disabled={processing} title={t('shortcuts.save') + ' (Ctrl+S)'}>
+                                    {editingProduct ? t('common.update') : t('common.create')} <span className="ml-2 text-xs opacity-70">(Ctrl+S)</span>
                                 </Button>
                             </DialogFooter>
                         </form>

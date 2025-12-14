@@ -4,6 +4,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Package, Users, Receipt, FolderTree, Search as SearchIcon } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface SearchResultsProps {
     query: string;
@@ -37,19 +38,20 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ query, results }: SearchResultsProps) {
+    const { t } = useTranslation();
     const totalResults = results.products.length + results.customers.length + 
                      results.orders.length + results.categories.length;
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Search', href: '/search' }]}>
-            <Head title={`Search: ${query}`} />
+        <AppLayout breadcrumbs={[{ title: t('search.title'), href: '/search' }]}>
+            <Head title={`${t('search.title')}: ${query}`} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-6">
                 <div className="flex items-center gap-4">
                     <SearchIcon className="h-8 w-8 text-muted-foreground" />
                     <div>
-                        <h1 className="text-2xl font-bold">Search Results</h1>
+                        <h1 className="text-2xl font-bold">{t('search.title')}</h1>
                         <p className="text-muted-foreground">
-                            Found {totalResults} result{totalResults !== 1 ? 's' : ''} for "{query}"
+                            {t('search.found')} {totalResults} {t('search.results_for')} "{query}"
                         </p>
                     </div>
                 </div>
@@ -61,7 +63,7 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Package className="h-5 w-5" />
-                                    Products ({results.products.length})
+                                    {t('nav.products')} ({results.products.length})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -76,7 +78,7 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                                                 <div className="flex-1">
                                                     <p className="font-medium">{product.name}</p>
                                                     {product.sku && (
-                                                        <p className="text-sm text-muted-foreground">SKU: {product.sku}</p>
+                                                        <p className="text-sm text-muted-foreground">{t('products.sku')}: {product.sku}</p>
                                                     )}
                                                     {product.category && (
                                                         <Badge variant="outline" className="mt-1 text-xs">
@@ -112,10 +114,10 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                                         >
                                             <p className="font-medium">{customer.name}</p>
                                             {customer.phone && (
-                                                <p className="text-sm text-muted-foreground">Phone: {customer.phone}</p>
+                                                <p className="text-sm text-muted-foreground">{t('customers.phone')}: {customer.phone}</p>
                                             )}
                                             {customer.email && (
-                                                <p className="text-sm text-muted-foreground">Email: {customer.email}</p>
+                                                <p className="text-sm text-muted-foreground">{t('customers.email')}: {customer.email}</p>
                                             )}
                                         </Link>
                                     ))}
@@ -130,7 +132,7 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Receipt className="h-5 w-5" />
-                                    Orders ({results.orders.length})
+                                    {t('nav.orders')} ({results.orders.length})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -163,7 +165,7 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <FolderTree className="h-5 w-5" />
-                                    Categories ({results.categories.length})
+                                    {t('nav.categories')} ({results.categories.length})
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -190,9 +192,9 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardContent className="pt-6 text-center py-12">
                             <SearchIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <p className="text-lg font-medium mb-2">No results found</p>
+                            <p className="text-lg font-medium mb-2">{t('search.no_results')}</p>
                             <p className="text-sm text-muted-foreground">
-                                Try searching with different keywords
+                                {t('search.try_different')}
                             </p>
                         </CardContent>
                     </Card>

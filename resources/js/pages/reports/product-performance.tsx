@@ -66,7 +66,7 @@ export default function ProductPerformance({ products, filters }: ProductPerform
                 <div className="flex items-center justify-between print:hidden">
                     <div>
                         <h1 className="text-2xl font-bold">{t('reports.product_performance')}</h1>
-                        <p className="text-muted-foreground">{t('reports.product_performance')}</p>
+                        <p className="text-muted-foreground">{t('reports.product_performance_description')}</p>
                     </div>
                     <div className="flex gap-2">
                         <Button 
@@ -113,7 +113,7 @@ export default function ProductPerformance({ products, filters }: ProductPerform
                     <CardContent className="pt-6">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                             <Input
-                                placeholder={t('products.search_products')}
+                                placeholder={`${t('products.search_products')} (${t('shortcuts.focus_search')}: /)`}
                                 defaultValue={filters.search}
                                 onChange={(e) => {
                                     router.get('/reports/product-performance', {
@@ -184,7 +184,7 @@ export default function ProductPerformance({ products, filters }: ProductPerform
                             </table>
                             {products.data.length === 0 && (
                                 <div className="text-center py-8 text-muted-foreground">
-                                    {t('common.no_data')}
+                                    {t('reports.no_product_data')}
                                 </div>
                             )}
                         </div>

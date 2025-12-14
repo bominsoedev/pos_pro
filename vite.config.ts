@@ -24,4 +24,25 @@ export default defineConfig({
     esbuild: {
         jsx: 'automatic',
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'react-vendor': ['react', 'react-dom', '@inertiajs/react'],
+                    'ui-vendor': [
+                        '@radix-ui/react-dialog',
+                        '@radix-ui/react-select',
+                        '@radix-ui/react-dropdown-menu',
+                        '@radix-ui/react-tooltip',
+                    ],
+                    'chart-vendor': ['recharts'],
+                    'i18n-vendor': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+                },
+            },
+        },
+        chunkSizeWarningLimit: 1000,
+    },
+    optimizeDeps: {
+        include: ['react', 'react-dom', '@inertiajs/react'],
+    },
 });

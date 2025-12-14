@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -13,7 +14,7 @@ interface PaginationProps {
     links: PaginationLink[];
 }
 
-export default function Pagination({ links }: PaginationProps) {
+const Pagination = memo(function Pagination({ links }: PaginationProps) {
     if (!links || links.length <= 1) return null;
 
     return (
@@ -93,5 +94,7 @@ export default function Pagination({ links }: PaginationProps) {
             })}
         </div>
     );
-}
+});
+
+export default Pagination;
 

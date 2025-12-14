@@ -103,7 +103,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                 <div className="flex items-center justify-between print:hidden">
                     <div>
                         <h1 className="text-2xl font-bold">{t('reports.cash_register')}</h1>
-                        <p className="text-muted-foreground">{t('reports.cash_register')}</p>
+                        <p className="text-muted-foreground">{t('reports.cash_register_description')}</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Input
@@ -151,7 +151,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 print:grid-cols-3">
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('pos.payment_method_cash')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.cash')}</CardTitle>
                             <Banknote className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -161,7 +161,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('pos.payment_method_card')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.card')}</CardTitle>
                             <CreditCard className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -171,7 +171,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('pos.payment_method_mobile')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.mobile')}</CardTitle>
                             <Smartphone className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -181,7 +181,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('pos.payment_method_bank')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.bank_transfer')}</CardTitle>
                             <Building2 className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -211,7 +211,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                                 <thead>
                                     <tr className="border-b">
                                         <th className="text-left p-2">{t('reports.time')}</th>
-                                        <th className="text-left p-2">{t('orders.order_number')}</th>
+                                        <th className="text-left p-2">{t('orders.order_hash')}</th>
                                         <th className="text-left p-2">{t('orders.customer')}</th>
                                         <th className="text-left p-2">{t('orders.cashier')}</th>
                                         <th className="text-left p-2">{t('reports.method')}</th>
@@ -250,9 +250,9 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={6} className="p-4 text-center text-muted-foreground">
-                                                {t('common.no_data')}
-                                            </td>
+                                        <td colSpan={6} className="p-4 text-center text-muted-foreground">
+                                            {t('reports.no_payments_found')}
+                                        </td>
                                         </tr>
                                     )}
                                 </tbody>

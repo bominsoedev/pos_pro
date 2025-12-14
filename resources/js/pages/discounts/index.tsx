@@ -129,7 +129,7 @@ export default function DiscountsIndex({ discounts, filters }: DiscountsPageProp
                             <div className="flex-1 relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder={t('discounts.search_discounts')}
+                                    placeholder={`${t('discounts.search_discounts')} (${t('shortcuts.focus_search')}: /)`}
                                     className="pl-10"
                                     defaultValue={filters.search}
                                     onChange={(e) => {

@@ -61,6 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('orders', App\Http\Controllers\OrderController::class)->except(['edit', 'update']);
     Route::patch('orders/{order}/status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('orders.update-status');
     Route::get('orders/{order}/receipt', [App\Http\Controllers\OrderController::class, 'receipt'])->name('orders.receipt');
+    Route::post('orders/bulk-receipt', [App\Http\Controllers\OrderController::class, 'bulkReceipt'])->name('orders.bulk-receipt');
     
     // Refunds
     Route::post('orders/{order}/refund', [App\Http\Controllers\RefundController::class, 'store'])->name('orders.refund');
@@ -109,6 +110,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('export/monthly-report', [App\Http\Controllers\ExportController::class, 'monthlyReportCsv'])->name('export.monthly-report');
     Route::get('export/yearly-report', [App\Http\Controllers\ExportController::class, 'yearlyReportCsv'])->name('export.yearly-report');
     Route::get('export/cash-register', [App\Http\Controllers\ExportController::class, 'cashRegisterCsv'])->name('export.cash-register');
+    
+    // Business Features
+    Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
+    Route::get('purchase-orders/create', [App\Http\Controllers\PurchaseOrderController::class, 'create'])->name('purchase-orders.create');
+    Route::resource('purchase-orders', App\Http\Controllers\PurchaseOrderController::class)->except(['edit', 'update', 'create']);
+    Route::patch('purchase-orders/{purchaseOrder}/status', [App\Http\Controllers\PurchaseOrderController::class, 'updateStatus'])->name('purchase-orders.update-status');
+    Route::resource('expenses', App\Http\Controllers\ExpenseController::class);
+    Route::resource('tax-rates', App\Http\Controllers\TaxRateController::class);
 });
 
 require __DIR__.'/settings.php';

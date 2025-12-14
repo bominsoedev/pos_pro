@@ -132,7 +132,7 @@ export default function RolesIndex({ roles, permissions }: RolesPageProps) {
                                                 size="icon"
                                                 variant="ghost"
                                                 onClick={() => {
-                                                    if (confirm('Are you sure you want to delete this role?')) {
+                                                    if (confirm(t('roles.delete_confirm'))) {
                                                         router.delete(`/roles/${role.id}`);
                                                     }
                                                 }}

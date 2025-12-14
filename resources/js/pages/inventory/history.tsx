@@ -6,6 +6,7 @@ import { ArrowLeft, Package, TrendingUp, TrendingDown, Minus } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import Pagination from '@/components/pagination';
 import { type BreadcrumbItem } from '@/types';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface InventoryLog {
     id: number;
@@ -34,6 +35,7 @@ interface InventoryHistoryProps {
 }
 
 export default function InventoryHistory({ product, logs }: InventoryHistoryProps) {
+    const { t } = useTranslation();
     const getTypeIcon = (type: string, change: number) => {
         if (type === 'sale') {
             return <TrendingDown className="h-4 w-4 text-destructive" />;
@@ -54,6 +56,16 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
         return variants[type] || 'secondary';
     };
 
+    const getTypeLabel = (type: string) => {
+        const labels: Record<string, string> = {
+            sale: t('inventory.type_sale'),
+            purchase: t('inventory.type_purchase'),
+            adjustment: t('inventory.type_adjustment'),
+            return: t('inventory.type_return'),
+        };
+        return labels[type] || type;
+    };
+
     const formatDate = (date: string) => {
         return new Date(date).toLocaleString('en-US', {
             year: 'numeric',
@@ -66,10 +78,10 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
 
     return (
         <AppLayout breadcrumbs={[
-            { title: 'Inventory', href: '/inventory' },
+            { title: t('nav.inventory'), href: '/inventory' },
             { title: product.name, href: `/inventory/${product.id}/history` },
         ]}>
-            <Head title={`Inventory History - ${product.name}`} />
+            <Head title={`${t('inventory.history')} - ${product.name}`} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -81,7 +93,7 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
                         <div>
                             <h1 className="text-2xl font-bold">{product.name}</h1>
                             <p className="text-muted-foreground">
-                                {product.sku && `SKU: ${product.sku} • `}
+                                {product.sku && `${t('products.sku')}: ${product.sku} • `}
                                 {product.category?.name}
                             </p>
                         </div>
@@ -90,20 +102,20 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
 
                 <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                     <CardHeader>
-                        <CardTitle>Inventory History</CardTitle>
+                        <CardTitle>{t('inventory.history')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b">
-                                        <th className="text-left p-2">Date</th>
-                                        <th className="text-left p-2">Type</th>
-                                        <th className="text-left p-2">User</th>
-                                        <th className="text-right p-2">Before</th>
-                                        <th className="text-right p-2">Change</th>
-                                        <th className="text-right p-2">After</th>
-                                        <th className="text-left p-2">Notes</th>
+                                        <th className="text-left p-2">{t('inventory.date')}</th>
+                                        <th className="text-left p-2">{t('inventory.type')}</th>
+                                        <th className="text-left p-2">{t('inventory.user')}</th>
+                                        <th className="text-right p-2">{t('inventory.before')}</th>
+                                        <th className="text-right p-2">{t('inventory.change')}</th>
+                                        <th className="text-right p-2">{t('inventory.after')}</th>
+                                        <th className="text-left p-2">{t('inventory.notes')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -113,10 +125,10 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
                                             <td className="p-2">
                                                 <Badge variant={getTypeBadge(log.type)} className="flex items-center gap-1 w-fit">
                                                     {getTypeIcon(log.type, log.quantity_change)}
-                                                    {log.type.charAt(0).toUpperCase() + log.type.slice(1)}
+                                                    {getTypeLabel(log.type)}
                                                 </Badge>
                                             </td>
-                                            <td className="p-2 text-sm">{log.user?.name || 'System'}</td>
+                                            <td className="p-2 text-sm">{log.user?.name || t('inventory.system')}</td>
                                             <td className="p-2 text-right">{log.quantity_before}</td>
                                             <td className={`p-2 text-right font-bold ${log.quantity_change > 0 ? 'text-green-600' : 'text-destructive'}`}>
                                                 {log.quantity_change > 0 ? '+' : ''}{log.quantity_change}
@@ -129,7 +141,7 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
                             </table>
                             {logs.data.length === 0 && (
                                 <div className="text-center py-8 text-muted-foreground">
-                                    No inventory history found
+                                    {t('inventory.no_history')}
                                 </div>
                             )}
                         </div>

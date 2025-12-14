@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
+import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 
 interface Customer {
     id: number;
@@ -40,6 +41,7 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
     const { t } = useTranslation();
     const [showDialog, setShowDialog] = useState(false);
     const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, put, processing, errors, reset } = useForm({
         name: '',
@@ -91,6 +93,41 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
         }
     };
 
+    // Keyboard shortcuts for customers page
+    useKeyboardShortcut([
+        {
+            key: 'n',
+            ctrl: true,
+            callback: () => {
+                if (!showDialog) {
+                    openDialog();
+                }
+            },
+            description: t('shortcuts.new_customer'),
+        },
+        {
+            key: 's',
+            ctrl: true,
+            callback: (e) => {
+                if (showDialog && !processing) {
+                    e.preventDefault();
+                    handleSubmit(e as any);
+                }
+            },
+            description: t('shortcuts.save'),
+        },
+        {
+            key: '/',
+            callback: () => {
+                if (!showDialog) {
+                    searchInputRef.current?.focus();
+                    searchInputRef.current?.select();
+                }
+            },
+            description: t('shortcuts.focus_search'),
+        },
+    ], !showDialog);
+
 
     return (
         <AppLayout breadcrumbs={[{ title: t('nav.customers'), href: '/customers' }]}>
@@ -101,9 +138,9 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                         <h1 className="text-2xl font-bold">{t('customers.title')}</h1>
                         <p className="text-muted-foreground">{t('customers.title')}</p>
                     </div>
-                    <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90">
+                    <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90" title={t('shortcuts.new_customer') + ' (Ctrl+N)'}>
                         <Plus className="mr-2 h-4 w-4" />
-                        {t('customers.add_customer')}
+                        {t('customers.add_customer')} <span className="ml-2 text-xs opacity-70">(Ctrl+N)</span>
                     </Button>
                 </div>
 
@@ -113,7 +150,8 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder={t('customers.search_customers')}
+                                ref={searchInputRef}
+                                placeholder={`${t('customers.search_customers')} (${t('shortcuts.focus_search')}: /)`}
                                 className="pl-10"
                                 defaultValue={filters.search}
                                 onChange={(e) => {
@@ -149,7 +187,7 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                             size="icon"
                                             variant="ghost"
                                             onClick={() => {
-                                                if (confirm('Are you sure you want to delete this customer?')) {
+                                                if (confirm(t('customers.delete_confirm'))) {
                                                     router.delete(`/customers/${customer.id}`);
                                                 }
                                             }}
@@ -272,8 +310,8 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                 <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                                     {t('common.cancel')}
                                 </Button>
-                                <Button type="submit" disabled={processing}>
-                                    {editingCustomer ? t('common.update') : t('common.create')}
+                                <Button type="submit" disabled={processing} title={t('shortcuts.save') + ' (Ctrl+S)'}>
+                                    {editingCustomer ? t('common.update') : t('common.create')} <span className="ml-2 text-xs opacity-70">(Ctrl+S)</span>
                                 </Button>
                             </DialogFooter>
                         </form>

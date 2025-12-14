@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useMemo } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -59,9 +60,12 @@ interface DashboardProps {
 export default function Dashboard({ stats, recentOrders, topProducts, lowStockProducts, salesChartData, monthlyTrend }: DashboardProps) {
     const { t } = useTranslation();
 
-    const salesGrowth = stats.last_month.sales > 0
-        ? ((stats.this_month.sales - stats.last_month.sales) / stats.last_month.sales) * 100
-        : 0;
+    const salesGrowth = useMemo(() => 
+        stats.last_month.sales > 0
+            ? ((stats.this_month.sales - stats.last_month.sales) / stats.last_month.sales) * 100
+            : 0,
+        [stats.last_month.sales, stats.this_month.sales]
+    );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

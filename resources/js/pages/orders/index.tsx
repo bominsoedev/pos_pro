@@ -3,12 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
-import { Search, Eye, Calendar, Download } from 'lucide-react';
+import { Search, Eye, Calendar, Download, Printer } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 import Pagination from '@/components/pagination';
 import { useTranslation } from '@/hooks/use-translation';
+import { useState, useRef } from 'react';
+import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 
 interface Order {
     id: number;
@@ -36,6 +39,59 @@ interface OrdersPageProps {
 
 export default function OrdersIndex({ orders, filters }: OrdersPageProps) {
     const { t } = useTranslation();
+    const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedOrders(orders.data.map(order => order.id));
+        } else {
+            setSelectedOrders([]);
+        }
+    };
+
+    const handleSelectOrder = (orderId: number, checked: boolean) => {
+        if (checked) {
+            setSelectedOrders([...selectedOrders, orderId]);
+        } else {
+            setSelectedOrders(selectedOrders.filter(id => id !== orderId));
+        }
+    };
+
+    const handleBulkPrint = () => {
+        if (selectedOrders.length === 0) {
+            return;
+        }
+        router.post('/orders/bulk-receipt', {
+            order_ids: selectedOrders,
+        }, {
+            onSuccess: () => {
+                // The bulk receipt page will auto-print
+            },
+        });
+    };
+
+    // Keyboard shortcuts for orders page
+    useKeyboardShortcut([
+        {
+            key: 'p',
+            ctrl: true,
+            callback: () => {
+                if (selectedOrders.length > 0) {
+                    handleBulkPrint();
+                }
+            },
+            description: t('shortcuts.print_selected_orders'),
+        },
+        {
+            key: '/',
+            callback: () => {
+                searchInputRef.current?.focus();
+                searchInputRef.current?.select();
+            },
+            description: t('shortcuts.focus_search'),
+        },
+    ]);
 
     const getStatusBadge = (status: string) => {
         const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -56,19 +112,31 @@ export default function OrdersIndex({ orders, filters }: OrdersPageProps) {
                         <h1 className="text-2xl font-bold">{t('orders.title')}</h1>
                         <p className="text-muted-foreground">{t('orders.title')}</p>
                     </div>
-                    <Button
-                        variant="outline"
-                        onClick={() => {
-                            const params = new URLSearchParams();
-                            if (filters.date_from) params.append('date_from', filters.date_from);
-                            if (filters.date_to) params.append('date_to', filters.date_to);
-                            if (filters.status) params.append('status', filters.status);
-                            window.location.href = `/export/orders?${params.toString()}`;
-                        }}
-                    >
-                        <Download className="mr-2 h-4 w-4" />
-                        {t('products.export_csv')}
-                    </Button>
+                    <div className="flex gap-2">
+                        {selectedOrders.length > 0 && (
+                            <Button
+                                variant="default"
+                                onClick={handleBulkPrint}
+                                title={t('shortcuts.print_selected_orders') + ' (Ctrl+P)'}
+                            >
+                                <Printer className="mr-2 h-4 w-4" />
+                                {t('orders.print_selected', { count: selectedOrders.length })} <span className="ml-2 text-xs opacity-70">(Ctrl+P)</span>
+                            </Button>
+                        )}
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                const params = new URLSearchParams();
+                                if (filters.date_from) params.append('date_from', filters.date_from);
+                                if (filters.date_to) params.append('date_to', filters.date_to);
+                                if (filters.status) params.append('status', filters.status);
+                                window.location.href = `/export/orders?${params.toString()}`;
+                            }}
+                        >
+                            <Download className="mr-2 h-4 w-4" />
+                            {t('products.export_csv')}
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Filters */}
@@ -78,7 +146,8 @@ export default function OrdersIndex({ orders, filters }: OrdersPageProps) {
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder={t('orders.title') + '...'}
+                                    ref={searchInputRef}
+                                    placeholder={`${t('orders.title')}... (${t('shortcuts.focus_search')}: /)`}
                                     className="pl-10"
                                     defaultValue={filters.search}
                                     onChange={(e) => {
@@ -162,6 +231,12 @@ export default function OrdersIndex({ orders, filters }: OrdersPageProps) {
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b">
+                                        <th className="text-left p-2 w-12">
+                                            <Checkbox
+                                                checked={selectedOrders.length === orders.data.length && orders.data.length > 0}
+                                                onCheckedChange={handleSelectAll}
+                                            />
+                                        </th>
                                         <th className="text-left p-2">{t('orders.order_number')}</th>
                                         <th className="text-left p-2">{t('orders.customer')}</th>
                                         <th className="text-left p-2">{t('orders.cashier')}</th>
@@ -175,6 +250,12 @@ export default function OrdersIndex({ orders, filters }: OrdersPageProps) {
                                 <tbody>
                                     {orders.data.map((order) => (
                                         <tr key={order.id} className="border-b hover:bg-muted/50">
+                                            <td className="p-2">
+                                                <Checkbox
+                                                    checked={selectedOrders.includes(order.id)}
+                                                    onCheckedChange={(checked) => handleSelectOrder(order.id, checked as boolean)}
+                                                />
+                                            </td>
                                             <td className="p-2 font-medium">{order.order_number}</td>
                                             <td className="p-2">{order.customer?.name || t('pos.walk_in')}</td>
                                             <td className="p-2">{order.user?.name || '-'}</td>

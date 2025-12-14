@@ -238,5 +238,35 @@ class OrderController extends Controller
             'settings' => $settings,
         ]);
     }
+
+    public function bulkReceipt(Request $request)
+    {
+        $validated = $request->validate([
+            'order_ids' => 'required|array',
+            'order_ids.*' => 'required|exists:orders,id',
+        ]);
+
+        $orders = Order::with(['customer', 'user', 'items.product', 'payments'])
+            ->whereIn('id', $validated['order_ids'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $settings = [
+            'store_name' => Setting::get('store_name', '24 Hour Store'),
+            'store_address' => Setting::get('store_address', ''),
+            'store_phone' => Setting::get('store_phone', ''),
+            'receipt_header' => Setting::get('receipt_header', 'Thank you for your purchase!'),
+            'receipt_footer' => Setting::get('receipt_footer', 'Have a great day!'),
+            'receipt_logo' => Setting::get('receipt_logo', ''),
+            'receipt_show_logo' => Setting::get('receipt_show_logo', false),
+            'receipt_show_barcode' => Setting::get('receipt_show_barcode', false),
+            'receipt_show_tax_details' => Setting::get('receipt_show_tax_details', true),
+        ];
+
+        return Inertia::render('orders/bulk-receipt', [
+            'orders' => $orders,
+            'settings' => $settings,
+        ]);
+    }
 }
 

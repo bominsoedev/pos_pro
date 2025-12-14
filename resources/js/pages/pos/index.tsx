@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { formatPrice } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
+import { useDebounce } from '@/hooks/use-debounce';
 
 const getBreadcrumbs = (t: (key: string) => string): BreadcrumbItem[] => [
     {
@@ -87,6 +88,8 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
     const barcodeInputRef = useRef<HTMLInputElement>(null);
     const barcodeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const [nextCartNumber, setNextCartNumber] = useState(2);
+    const [searchInput, setSearchInput] = useState(filters.search || '');
+    const debouncedSearch = useDebounce(searchInput, 500);
 
     // Get active cart
     const activeCart = carts.find(c => c.id === activeCartId) || carts[0];
@@ -105,14 +108,14 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
         payment_amount: 0,
     });
 
-    const updateCart = (cartId: string, updater: (cart: Cart) => Cart) => {
-        setCarts(carts.map(c => c.id === cartId ? updater(c) : c));
-    };
+    const updateCart = useCallback((cartId: string, updater: (cart: Cart) => Cart) => {
+        setCarts(prevCarts => prevCarts.map(c => c.id === cartId ? updater(c) : c));
+    }, []);
 
-    const addToCart = (product: any) => {
+    const addToCart = useCallback((product: any) => {
         const stockQty = Number(product.stock_quantity) || 0;
         if (product.track_inventory && stockQty <= 0) {
-            alert('Product out of stock');
+            alert(t('pos.out_of_stock'));
             return;
         }
 
@@ -121,7 +124,7 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
         
         if (existingItem) {
             if (product.track_inventory && existingItem.quantity >= stockQty) {
-                alert('Insufficient stock');
+                alert(t('pos.insufficient_stock'));
                 return;
             }
             updateCart(activeCartId, (cart) => ({
@@ -152,9 +155,9 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                 }],
             }));
         }
-    };
+    }, [activeCart, activeCartId, updateCart, t]);
 
-    const updateQuantity = (productId: number, change: number) => {
+    const updateQuantity = useCallback((productId: number, change: number) => {
         updateCart(activeCartId, (cart) => ({
             ...cart,
             items: cart.items.map(item => {
@@ -171,14 +174,14 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                 return item;
             }).filter(Boolean) as CartItem[],
         }));
-    };
+    }, [activeCartId, updateCart]);
 
-    const removeFromCart = (productId: number) => {
+    const removeFromCart = useCallback((productId: number) => {
         updateCart(activeCartId, (cart) => ({
             ...cart,
             items: cart.items.filter(item => item.product_id !== productId),
         }));
-    };
+    }, [activeCartId, updateCart]);
 
     const createNewCart = () => {
         const newCartId = nextCartNumber.toString();
@@ -243,14 +246,14 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                 }, 300);
             } else {
                 const errorData = await response.json().catch(() => ({}));
-                alert(errorData.error || `Product with barcode "${trimmedBarcode}" not found`);
+                alert(errorData.error || t('pos.barcode_not_found', { barcode: trimmedBarcode }));
                 setBarcodeInput('');
                 setIsScanning(false);
                 barcodeInputRef.current?.focus();
             }
         } catch (error) {
             console.error('Barcode scan error:', error);
-            alert('Error scanning barcode. Please try again.');
+            alert(t('pos.error_scanning_barcode'));
             setBarcodeInput('');
             setIsScanning(false);
             barcodeInputRef.current?.focus();
@@ -329,14 +332,16 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, [cart, showPaymentDialog]);
 
-    const calculateTotals = () => {
+    const calculateTotals = useCallback(() => {
         const subtotal = cart.reduce((sum, item) => sum + item.total, 0);
         const tax = subtotal * (taxRate / 100);
         const total = subtotal + tax - discountAmount;
         return { subtotal, tax, total };
-    };
+    }, [cart, taxRate, discountAmount]);
 
-    const applyDiscount = (code: string) => {
+    const { subtotal, tax, total } = useMemo(() => calculateTotals(), [calculateTotals]);
+
+    const applyDiscount = useCallback((code: string) => {
         // Simple discount codes - can be enhanced with database lookup
         const discounts: Record<string, number> = {
             'SAVE10': 10,
@@ -352,13 +357,13 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                 discountAmount: (subtotal * discount) / 100,
                 discountCode: code,
             }));
-            alert(`Discount ${discount}% applied!`);
+            alert(t('pos.discount_applied', { discount }));
         } else {
-            alert('Invalid discount code');
+            alert(t('pos.invalid_discount_code'));
         }
-    };
+    }, [calculateTotals, activeCartId, updateCart, t]);
 
-    const handleCheckout = () => {
+    const handleCheckout = useCallback(() => {
         if (cart.length === 0) {
             alert(t('pos.cart_empty'));
             return;
@@ -381,7 +386,7 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
             payment_amount: total,
         });
         setShowPaymentDialog(true);
-    };
+    }, [cart, calculateTotals, selectedCustomer, taxRate, discountAmount, discountCode, paymentMethod, setData, t]);
 
     const handlePayment = () => {
         const { total } = calculateTotals();
@@ -432,12 +437,11 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
             },
             onError: (errors) => {
                 console.error('Payment error:', errors);
-                alert('Error processing payment. Please try again.');
+                alert(t('pos.error_processing_payment'));
             },
         });
     };
 
-    const { subtotal, tax, total } = calculateTotals();
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -488,7 +492,7 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                                     </div>
                                     {barcodeInput && !isScanning && (
                                         <p className="text-xs text-muted-foreground px-1">
-                                            Press Enter to scan or wait for auto-scan
+                                            {t('pos.press_enter_to_scan')}
                                         </p>
                                     )}
                                     <div className="flex gap-2">
@@ -497,12 +501,9 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                                             <Input
                                                 placeholder={t('pos.search_products')}
                                                 className="pl-10"
-                                                defaultValue={filters.search}
+                                                value={searchInput}
                                                 onChange={(e) => {
-                                                    router.get('/pos', { search: e.target.value, category_id: filters.category_id }, {
-                                                        preserveState: true,
-                                                        preserveScroll: true,
-                                                    });
+                                                    setSearchInput(e.target.value);
                                                 }}
                                             />
                                         </div>
@@ -615,7 +616,8 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                if (confirm(`Delete ${c.name || `Cart ${c.id}`}?`)) {
+                                                                const cartName = c.name || t('pos.cart_number', { number: c.id });
+                                                                if (confirm(`${t('pos.delete_cart_confirm')} ${cartName}?`)) {
                                                                     deleteCart(c.id);
                                                                 }
                                                             }}

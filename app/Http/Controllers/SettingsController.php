@@ -11,6 +11,7 @@ class SettingsController extends Controller
     public function index()
     {
         $settings = [
+            'app_name' => Setting::get('app_name', config('app.name', 'Laravel')),
             'tax_rate' => Setting::get('tax_rate', 0),
             'store_name' => Setting::get('store_name', '24 Hour Store'),
             'store_address' => Setting::get('store_address', ''),
@@ -34,6 +35,7 @@ class SettingsController extends Controller
     public function update(Request $request)
     {
         $validated = $request->validate([
+            'app_name' => 'required|string|max:255',
             'tax_rate' => 'required|numeric|min:0|max:100',
             'store_name' => 'required|string|max:255',
             'store_address' => 'nullable|string',
@@ -49,6 +51,7 @@ class SettingsController extends Controller
             'low_stock_notification' => 'boolean',
         ]);
 
+        Setting::set('app_name', $validated['app_name'], 'string', 'Application name');
         Setting::set('tax_rate', $validated['tax_rate'], 'float', 'Tax rate percentage');
         Setting::set('store_name', $validated['store_name'], 'string', 'Store name');
         Setting::set('store_address', $validated['store_address'] ?? '', 'string', 'Store address');

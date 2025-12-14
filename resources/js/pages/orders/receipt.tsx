@@ -2,6 +2,7 @@ import { Head } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { Printer } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface OrderItem {
     id: number;
@@ -53,11 +54,12 @@ interface ReceiptProps {
 }
 
 export default function Receipt({ order, settings }: ReceiptProps) {
+    const { t } = useTranslation();
     const storeName = settings?.store_name || '24 HOUR STORE';
     const storeAddress = settings?.store_address || '';
     const storePhone = settings?.store_phone || '';
-    const receiptHeader = settings?.receipt_header || 'Thank you for your purchase!';
-    const receiptFooter = settings?.receipt_footer || 'Have a great day!';
+    const receiptHeader = settings?.receipt_header || t('receipt.default_header');
+    const receiptFooter = settings?.receipt_footer || t('receipt.default_footer');
     useEffect(() => {
         // Auto-print when page loads
         window.onload = () => {
@@ -80,7 +82,7 @@ export default function Receipt({ order, settings }: ReceiptProps) {
 
     return (
         <>
-            <Head title={`Receipt - ${order.order_number}`} />
+            <Head title={`${t('receipt.title')} - ${order.order_number}`} />
             <div className="min-h-screen bg-white p-8 print:p-4">
                 {/* Print Button - Hidden when printing */}
                 <div className="mb-4 print:hidden">
@@ -89,7 +91,7 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
                     >
                         <Printer className="h-4 w-4" />
-                        Print Receipt
+                        {t('receipt.print')}
                     </button>
                 </div>
 
@@ -101,7 +103,7 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                             <div className="mb-3">
                                 <img 
                                     src={settings.receipt_logo} 
-                                    alt="Store Logo" 
+                                    alt={t('receipt.store_logo')} 
                                     className="max-h-20 mx-auto object-contain"
                                 />
                             </div>
@@ -111,7 +113,7 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                             <p className="text-sm text-gray-600 mb-1">{storeAddress}</p>
                         )}
                         {storePhone && (
-                            <p className="text-sm text-gray-600 mb-1">Phone: {storePhone}</p>
+                            <p className="text-sm text-gray-600 mb-1">{t('receipt.phone')}: {storePhone}</p>
                         )}
                         <p className="text-sm text-gray-600 mt-2">{receiptHeader}</p>
                         {settings?.receipt_show_barcode && (
@@ -127,22 +129,22 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                     {/* Order Info */}
                     <div className="mb-4 space-y-1 text-sm">
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Order #:</span>
+                            <span className="text-gray-600">{t('receipt.order_number')}:</span>
                             <span className="font-semibold">{order.order_number}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Date:</span>
+                            <span className="text-gray-600">{t('receipt.date')}:</span>
                             <span>{formatDate(order.created_at)}</span>
                         </div>
                         {order.user && (
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Cashier:</span>
+                                <span className="text-gray-600">{t('receipt.cashier')}:</span>
                                 <span>{order.user.name}</span>
                             </div>
                         )}
                         {order.customer && (
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Customer:</span>
+                                <span className="text-gray-600">{t('receipt.customer')}:</span>
                                 <span>{order.customer.name}</span>
                             </div>
                         )}
@@ -153,10 +155,10 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b text-left">
-                                    <th className="pb-2">Item</th>
-                                    <th className="text-right pb-2">Qty</th>
-                                    <th className="text-right pb-2">Price</th>
-                                    <th className="text-right pb-2">Total</th>
+                                    <th className="pb-2">{t('receipt.item')}</th>
+                                    <th className="text-right pb-2">{t('receipt.qty')}</th>
+                                    <th className="text-right pb-2">{t('receipt.price')}</th>
+                                    <th className="text-right pb-2">{t('receipt.total')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -167,7 +169,7 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                                                 <div className="font-medium">{item.product_name}</div>
                                                 {item.discount > 0 && (
                                                     <div className="text-xs text-red-600">
-                                                        Discount: {formatCurrency(item.discount)}
+                                                        {t('receipt.discount')}: {formatCurrency(item.discount)}
                                                     </div>
                                                 )}
                                             </div>
@@ -184,23 +186,23 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                     {/* Totals */}
                     <div className="mb-4 space-y-2 text-sm">
                         <div className="flex justify-between">
-                            <span>Subtotal:</span>
+                            <span>{t('receipt.subtotal')}:</span>
                             <span>{formatCurrency(order.subtotal)}</span>
                         </div>
                         {order.tax_amount > 0 && settings?.receipt_show_tax_details && (
                             <div className="flex justify-between">
-                                <span>Tax:</span>
+                                <span>{t('receipt.tax')}:</span>
                                 <span>{formatCurrency(order.tax_amount)}</span>
                             </div>
                         )}
                         {order.discount_amount > 0 && (
                             <div className="flex justify-between text-red-600">
-                                <span>Discount:</span>
+                                <span>{t('receipt.discount')}:</span>
                                 <span>-{formatCurrency(order.discount_amount)}</span>
                             </div>
                         )}
                         <div className="flex justify-between text-lg font-bold border-t pt-2 mt-2">
-                            <span>TOTAL:</span>
+                            <span>{t('receipt.total')}:</span>
                             <span>{formatCurrency(order.total)}</span>
                         </div>
                     </div>
@@ -210,7 +212,7 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                         <div className="text-sm space-y-1">
                             {order.payments.map((payment) => (
                                 <div key={payment.id} className="flex justify-between">
-                                    <span className="capitalize">{payment.method}:</span>
+                                    <span className="capitalize">{t('receipt.payment_method')}:</span>
                                     <span className="font-semibold">{formatCurrency(payment.amount)}</span>
                                 </div>
                             ))}

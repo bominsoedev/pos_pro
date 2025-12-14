@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle2, XCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/use-translation';
 
-export default function Toast() {
+const Toast = memo(function Toast() {
     const { flash } = usePage().props as any;
+    const { t } = useTranslation();
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [type, setType] = useState<'success' | 'error' | null>(null);
@@ -41,9 +43,13 @@ export default function Toast() {
                     )}
                     <div className="flex-1">
                         <AlertTitle>
-                            {type === 'success' ? 'Success' : 'Error'}
+                            {type === 'success' ? t('messages.success') : t('messages.error')}
                         </AlertTitle>
-                        <AlertDescription>{message}</AlertDescription>
+                        <AlertDescription>
+                            {message && message.startsWith('messages.')
+                                ? (t(message as any) || message.replace('messages.', ''))
+                                : message}
+                        </AlertDescription>
                     </div>
                     <Button
                         variant="ghost"
@@ -57,5 +63,7 @@ export default function Toast() {
             </Alert>
         </div>
     );
-}
+});
+
+export default Toast;
 

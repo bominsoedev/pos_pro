@@ -138,10 +138,10 @@ class PurchaseOrderController extends Controller
 
             DB::commit();
 
-            return redirect()->route('purchase-orders.show', $purchaseOrder)->with('success', 'messages.purchase_order_created');
+            return redirect()->route('purchase-orders.show', $purchaseOrder)->with('success', 'Purchase order created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'messages.purchase_order_create_failed');
+            return redirect()->back()->with('error', 'Failed to create purchase order: ' . $e->getMessage());
         }
     }
 
@@ -162,18 +162,15 @@ class PurchaseOrderController extends Controller
                 foreach ($purchaseOrder->items as $item) {
                     $product = $item->product;
                     if ($product && $product->track_inventory) {
-                        $previousQuantity = $product->stock_quantity;
                         $product->increment('stock_quantity', $item->quantity);
-                        $product->refresh(); // Refresh to get updated quantity
                         $product->update(['cost' => $item->unit_cost]);
 
                         InventoryLog::create([
                             'product_id' => $product->id,
-                            'user_id' => auth()->id(),
                             'type' => 'purchase',
-                            'quantity_change' => $item->quantity,
-                            'quantity_before' => $previousQuantity,
-                            'quantity_after' => $product->stock_quantity,
+                            'quantity' => $item->quantity,
+                            'previous_quantity' => $product->stock_quantity - $item->quantity,
+                            'new_quantity' => $product->stock_quantity,
                             'notes' => "Purchase Order: {$purchaseOrder->po_number}",
                         ]);
                     }
@@ -182,21 +179,21 @@ class PurchaseOrderController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'messages.purchase_order_updated');
+            return redirect()->back()->with('success', 'Purchase order status updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'messages.purchase_order_update_failed');
+            return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
         }
     }
 
     public function destroy(PurchaseOrder $purchaseOrder)
     {
         if ($purchaseOrder->status === 'received') {
-            return redirect()->back()->with('error', 'messages.purchase_order_cannot_delete_received');
+            return redirect()->back()->with('error', 'Cannot delete received purchase order.');
         }
 
         $purchaseOrder->delete();
 
-        return redirect()->route('purchase-orders.index')->with('success', 'messages.purchase_order_deleted');
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase order deleted successfully.');
     }
 }

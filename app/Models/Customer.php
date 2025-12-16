@@ -23,12 +23,20 @@ class Customer extends Model
         'total_orders',
         'loyalty_points',
         'loyalty_tier',
+        'credit_balance',
+        'credit_limit',
+        'allow_credit',
+        'payment_terms_days',
     ];
 
     protected $casts = [
         'total_spent' => 'decimal:2',
         'total_orders' => 'integer',
         'loyalty_points' => 'integer',
+        'credit_balance' => 'decimal:2',
+        'credit_limit' => 'decimal:2',
+        'allow_credit' => 'boolean',
+        'payment_terms_days' => 'integer',
     ];
 
     public function orders(): HasMany
@@ -102,6 +110,37 @@ class Customer extends Model
             'platinum' => 1.5,
             default => 1.0,
         };
+    }
+
+    public function canUseCredit(float $amount): bool
+    {
+        if (!$this->allow_credit) {
+            return false;
+        }
+
+        $availableCredit = $this->credit_limit - abs($this->credit_balance);
+        return $availableCredit >= $amount;
+    }
+
+    public function addCredit(float $amount, ?string $description = null): void
+    {
+        $this->increment('credit_balance', $amount);
+    }
+
+    public function reduceCredit(float $amount, ?string $description = null): void
+    {
+        if (abs($this->credit_balance) < $amount) {
+            throw new \Exception('Insufficient credit balance');
+        }
+        $this->decrement('credit_balance', $amount);
+    }
+
+    public function getAvailableCredit(): float
+    {
+        if (!$this->allow_credit) {
+            return 0;
+        }
+        return max(0, $this->credit_limit - abs($this->credit_balance));
     }
 }
 

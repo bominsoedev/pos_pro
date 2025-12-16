@@ -7,11 +7,10 @@ import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 import './lib/i18n';
 
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
 createInertiaApp({
-    title: (title, page) => {
-        const appName = (page?.props as any)?.app_name || import.meta.env.VITE_APP_NAME || 'Laravel';
-        return title ? `${title} - ${appName}` : appName;
-    },
+    title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) =>
         resolvePageComponent(
             `./pages/${name}.tsx`,

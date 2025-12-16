@@ -6,6 +6,7 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use App\Models\Setting;
+use App\Models\Way;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -39,6 +40,16 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        // Get current way from session
+        $currentWayId = session('current_way_id');
+        $currentWay = $currentWayId ? Way::find($currentWayId) : null;
+        
+        // Get all active ways for selector
+        $activeWays = Way::where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['id', 'name', 'code', 'description']);
+
         return [
             ...parent::share($request),
             'name' => Setting::get('app_name', config('app.name', 'Laravel')),
@@ -48,6 +59,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'currentWay' => $currentWay ? [
+                'id' => $currentWay->id,
+                'name' => $currentWay->name,
+                'code' => $currentWay->code,
+            ] : null,
+            'ways' => $activeWays,
         ];
     }
 }

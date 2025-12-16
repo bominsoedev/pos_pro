@@ -35,7 +35,7 @@ class TaxRateController extends Controller
 
         TaxRate::create($validated);
 
-        return redirect()->back()->with('success', 'messages.tax_rate_created');
+        return redirect()->back()->with('success', 'Tax rate created successfully.');
     }
 
     public function update(Request $request, TaxRate $taxRate)
@@ -56,17 +56,17 @@ class TaxRateController extends Controller
 
         $taxRate->update($validated);
 
-        return redirect()->back()->with('success', 'messages.tax_rate_updated');
+        return redirect()->back()->with('success', 'Tax rate updated successfully.');
     }
 
     public function destroy(TaxRate $taxRate)
     {
         if ($taxRate->is_default) {
-            return redirect()->back()->with('error', 'messages.tax_rate_cannot_delete_default');
+            return redirect()->back()->with('error', 'Cannot delete default tax rate.');
         }
 
         $taxRate->delete();
 
-        return redirect()->back()->with('success', 'messages.tax_rate_deleted');
+        return redirect()->back()->with('success', 'Tax rate deleted successfully.');
     }
 }

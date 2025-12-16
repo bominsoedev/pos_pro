@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,6 @@ import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
-import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 
 interface Customer {
     id: number;
@@ -25,6 +24,10 @@ interface Customer {
     country: string | null;
     total_spent: number;
     total_orders: number;
+    credit_balance: number;
+    credit_limit: number;
+    allow_credit: boolean;
+    payment_terms_days: number;
 }
 
 interface CustomersPageProps {
@@ -41,7 +44,6 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
     const { t } = useTranslation();
     const [showDialog, setShowDialog] = useState(false);
     const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
-    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, put, processing, errors, reset } = useForm({
         name: '',
@@ -52,6 +54,10 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
         state: '',
         postal_code: '',
         country: '',
+        credit_balance: 0,
+        credit_limit: 0,
+        allow_credit: false,
+        payment_terms_days: 0,
     });
 
     const openDialog = (customer?: Customer) => {
@@ -66,6 +72,10 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                 state: customer.state || '',
                 postal_code: customer.postal_code || '',
                 country: customer.country || '',
+                credit_balance: customer.credit_balance || 0,
+                credit_limit: customer.credit_limit || 0,
+                allow_credit: customer.allow_credit || false,
+                payment_terms_days: customer.payment_terms_days || 0,
             });
         } else {
             setEditingCustomer(null);
@@ -93,41 +103,6 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
         }
     };
 
-    // Keyboard shortcuts for customers page
-    useKeyboardShortcut([
-        {
-            key: 'n',
-            ctrl: true,
-            callback: () => {
-                if (!showDialog) {
-                    openDialog();
-                }
-            },
-            description: t('shortcuts.new_customer'),
-        },
-        {
-            key: 's',
-            ctrl: true,
-            callback: (e) => {
-                if (showDialog && !processing) {
-                    e.preventDefault();
-                    handleSubmit(e as any);
-                }
-            },
-            description: t('shortcuts.save'),
-        },
-        {
-            key: '/',
-            callback: () => {
-                if (!showDialog) {
-                    searchInputRef.current?.focus();
-                    searchInputRef.current?.select();
-                }
-            },
-            description: t('shortcuts.focus_search'),
-        },
-    ], !showDialog);
-
 
     return (
         <AppLayout breadcrumbs={[{ title: t('nav.customers'), href: '/customers' }]}>
@@ -138,9 +113,9 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                         <h1 className="text-2xl font-bold">{t('customers.title')}</h1>
                         <p className="text-muted-foreground">{t('customers.title')}</p>
                     </div>
-                    <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90" title={t('shortcuts.new_customer') + ' (Ctrl+N)'}>
+                    <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90">
                         <Plus className="mr-2 h-4 w-4" />
-                        {t('customers.add_customer')} <span className="ml-2 text-xs opacity-70">(Ctrl+N)</span>
+                        {t('customers.add_customer')}
                     </Button>
                 </div>
 
@@ -150,8 +125,7 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                ref={searchInputRef}
-                                placeholder={`${t('customers.search_customers')} (${t('shortcuts.focus_search')}: /)`}
+                                placeholder={t('customers.search_customers')}
                                 className="pl-10"
                                 defaultValue={filters.search}
                                 onChange={(e) => {
@@ -224,6 +198,22 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                             <Badge variant="secondary">{customer.total_orders}</Badge>
                                         </div>
                                     </div>
+                                    {customer.allow_credit && (
+                                        <div className="pt-2 border-t">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-xs text-muted-foreground">Credit Limit</p>
+                                                    <p className="font-semibold">{formatCurrency(customer.credit_limit)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-muted-foreground">Credit Balance</p>
+                                                    <p className={`font-semibold ${customer.credit_balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                                                        {formatCurrency(customer.credit_balance)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
@@ -306,12 +296,49 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                     onChange={(e) => setData('country', e.target.value)}
                                 />
                             </div>
+                            <div className="border-t pt-4">
+                                <h3 className="font-semibold mb-4">Credit Information</h3>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <input
+                                        type="checkbox"
+                                        checked={data.allow_credit}
+                                        onChange={(e) => setData('allow_credit', e.target.checked)}
+                                        className="rounded border-gray-300"
+                                    />
+                                    <Label>Allow Credit</Label>
+                                </div>
+                                {data.allow_credit && (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <Label>Credit Limit</Label>
+                                            <Input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                value={data.credit_limit}
+                                                onChange={(e) => setData('credit_limit', parseFloat(e.target.value) || 0)}
+                                            />
+                                            {errors.credit_limit && <p className="text-sm text-destructive">{errors.credit_limit}</p>}
+                                        </div>
+                                        <div>
+                                            <Label>Payment Terms (Days)</Label>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                value={data.payment_terms_days}
+                                                onChange={(e) => setData('payment_terms_days', parseInt(e.target.value) || 0)}
+                                            />
+                                            {errors.payment_terms_days && <p className="text-sm text-destructive">{errors.payment_terms_days}</p>}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                             <DialogFooter>
                                 <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                                     {t('common.cancel')}
                                 </Button>
-                                <Button type="submit" disabled={processing} title={t('shortcuts.save') + ' (Ctrl+S)'}>
-                                    {editingCustomer ? t('common.update') : t('common.create')} <span className="ml-2 text-xs opacity-70">(Ctrl+S)</span>
+                                <Button type="submit" disabled={processing}>
+                                    {editingCustomer ? t('common.update') : t('common.create')}
                                 </Button>
                             </DialogFooter>
                         </form>

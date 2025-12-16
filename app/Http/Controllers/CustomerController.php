@@ -39,6 +39,10 @@ class CustomerController extends Controller
             'state' => 'nullable|string|max:255',
             'postal_code' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:255',
+            'credit_balance' => 'nullable|numeric|min:0',
+            'credit_limit' => 'nullable|numeric|min:0',
+            'allow_credit' => 'boolean',
+            'payment_terms_days' => 'nullable|integer|min:0',
         ]);
 
         Customer::create($validated);
@@ -57,6 +61,10 @@ class CustomerController extends Controller
             'state' => 'nullable|string|max:255',
             'postal_code' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:255',
+            'credit_balance' => 'nullable|numeric',
+            'credit_limit' => 'nullable|numeric|min:0',
+            'allow_credit' => 'boolean',
+            'payment_terms_days' => 'nullable|integer|min:0',
         ]);
 
         $customer->update($validated);

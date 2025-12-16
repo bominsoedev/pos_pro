@@ -64,7 +64,7 @@ class ExpenseController extends Controller
             ...$validated,
         ]);
 
-        return redirect()->back()->with('success', 'messages.expense_created');
+        return redirect()->back()->with('success', 'Expense created successfully.');
     }
 
     public function update(Request $request, Expense $expense)
@@ -85,13 +85,13 @@ class ExpenseController extends Controller
 
         $expense->update($validated);
 
-        return redirect()->back()->with('success', 'messages.expense_updated');
+        return redirect()->back()->with('success', 'Expense updated successfully.');
     }
 
     public function destroy(Expense $expense)
     {
         $expense->delete();
 
-        return redirect()->back()->with('success', 'messages.expense_deleted');
+        return redirect()->back()->with('success', 'Expense deleted successfully.');
     }
 }

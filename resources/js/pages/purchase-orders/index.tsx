@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
 import { useDebounce } from '@/hooks/use-debounce';
-import Pagination from '@/components/pagination';
 
 interface PurchaseOrder {
     id: number;
@@ -96,7 +95,7 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, filters
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder={`${t('common.search')} (${t('shortcuts.focus_search')}: /)`}
+                                    placeholder={t('common.search')}
                                     className="pl-10"
                                     value={searchInput}
                                     onChange={(e) => setSearchInput(e.target.value)}

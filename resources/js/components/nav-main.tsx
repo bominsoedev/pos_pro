@@ -8,6 +8,7 @@ import {
 import { resolveUrl } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
+import { formatShortcutKey } from '@/lib/platform';
 
 export function NavMain({ items = [] }: { items: (NavItem & { shortcut?: string })[] }) {
     const page = usePage();
@@ -26,12 +27,12 @@ export function NavMain({ items = [] }: { items: (NavItem & { shortcut?: string 
                         >
                             <Link href={item.href} prefetch className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
                                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                                    {item.icon && <item.icon />}
+                                {item.icon && <item.icon />}
                                     <span className="truncate">{item.title}</span>
                                 </div>
                                 {item.shortcut && (
                                     <kbd className="ml-auto px-1.5 py-0.5 text-xs font-semibold text-sidebar-foreground/50 bg-sidebar-accent/50 border border-sidebar-border rounded shrink-0 group-data-[collapsible=icon]:hidden">
-                                        {item.shortcut}
+                                        {formatShortcutKey(item.shortcut)}
                                     </kbd>
                                 )}
                             </Link>

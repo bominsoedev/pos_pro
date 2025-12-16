@@ -14,7 +14,6 @@ import { useTranslation } from '@/hooks/use-translation';
 
 interface PosSettingsProps {
     settings: {
-        app_name: string;
         tax_rate: number;
         store_name: string;
         store_address: string;
@@ -44,7 +43,6 @@ export default function PosSettings({ settings }: PosSettingsProps) {
     const [uploading, setUploading] = useState(false);
 
     const { data, setData, put, processing, errors } = useForm({
-        app_name: settings.app_name || '',
         tax_rate: settings.tax_rate || 0,
         store_name: settings.store_name || '',
         store_address: settings.store_address || '',
@@ -111,33 +109,6 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                     />
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Application Settings */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('settings.app_name')}</CardTitle>
-                                <CardDescription>
-                                    {t('settings.app_name_description')}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div>
-                                    <Label>{t('settings.app_name')} *</Label>
-                                    <Input
-                                        value={data.app_name}
-                                        onChange={(e) => setData('app_name', e.target.value)}
-                                        placeholder={t('settings.app_name_placeholder')}
-                                        required
-                                    />
-                                    {errors.app_name && (
-                                        <p className="text-sm text-destructive mt-1">{errors.app_name}</p>
-                                    )}
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {t('settings.app_name_description')}
-                                    </p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
                         {/* Tax Settings */}
                         <Card>
                             <CardHeader>

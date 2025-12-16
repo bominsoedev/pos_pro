@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\InventoryLog;
+use App\Models\User;
+use App\Models\Setting;
+use App\Notifications\LowStockAlert;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class InventoryController extends Controller
 {
@@ -75,6 +79,22 @@ class InventoryController extends Controller
                 'quantity_after' => $quantityAfter,
                 'notes' => $validated['notes'],
             ]);
+
+            // Check for low stock and send notification
+            $product->refresh();
+            if ($product->isLowStock() && Setting::get('low_stock_notification', true)) {
+                $admins = User::whereHas('roles', function ($query) {
+                    $query->where('slug', 'admin');
+                })->get();
+
+                if ($admins->isNotEmpty()) {
+                    try {
+                        Notification::send($admins, new LowStockAlert($product));
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to send low stock alert: ' . $e->getMessage());
+                    }
+                }
+            }
 
             DB::commit();
 

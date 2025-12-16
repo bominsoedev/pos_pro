@@ -6,10 +6,15 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\InventoryLog;
+use App\Models\User;
 use App\Models\Setting;
+use App\Notifications\OrderConfirmation;
+use App\Notifications\NewOrderNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -161,6 +166,22 @@ class OrderController extends Controller
                         'quantity_after' => $quantityAfter,
                         'notes' => "Sale - Order #{$order->order_number}",
                     ]);
+
+                    // Check for low stock after sale
+                    $product->refresh();
+                    if ($product->isLowStock() && Setting::get('low_stock_notification', true)) {
+                        $admins = User::whereHas('roles', function ($query) {
+                            $query->where('slug', 'admin');
+                        })->get();
+
+                        if ($admins->isNotEmpty()) {
+                            try {
+                                Notification::send($admins, new \App\Notifications\LowStockAlert($product));
+                            } catch (\Exception $e) {
+                                \Log::error('Failed to send low stock alert: ' . $e->getMessage());
+                            }
+                        }
+                    }
                 }
             }
 
@@ -176,6 +197,32 @@ class OrderController extends Controller
             }
 
             DB::commit();
+
+            // Send email notifications
+            $order->load(['customer', 'user', 'items.product', 'payments']);
+            
+            // Send order confirmation to customer if email exists
+            if ($order->customer && $order->customer->email) {
+                try {
+                    $order->customer->notify(new OrderConfirmation($order));
+                } catch (\Exception $e) {
+                    // Log error but don't fail the order
+                    \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+                }
+            }
+
+            // Send new order notification to admins
+            $admins = User::whereHas('roles', function ($query) {
+                $query->where('slug', 'admin');
+            })->get();
+
+            if ($admins->isNotEmpty()) {
+                try {
+                    Notification::send($admins, new NewOrderNotification($order));
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send new order notification: ' . $e->getMessage());
+                }
+            }
 
             // For POS, return JSON with order ID for receipt printing
             if (request()->wantsJson() || request()->expectsJson()) {
@@ -239,34 +286,24 @@ class OrderController extends Controller
         ]);
     }
 
-    public function bulkReceipt(Request $request)
+    public function invoice(Order $order)
     {
-        $validated = $request->validate([
-            'order_ids' => 'required|array',
-            'order_ids.*' => 'required|exists:orders,id',
-        ]);
-
-        $orders = Order::with(['customer', 'user', 'items.product', 'payments'])
-            ->whereIn('id', $validated['order_ids'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+        $order->load(['customer', 'user', 'items.product', 'payments']);
+        
         $settings = [
             'store_name' => Setting::get('store_name', '24 Hour Store'),
             'store_address' => Setting::get('store_address', ''),
             'store_phone' => Setting::get('store_phone', ''),
-            'receipt_header' => Setting::get('receipt_header', 'Thank you for your purchase!'),
-            'receipt_footer' => Setting::get('receipt_footer', 'Have a great day!'),
-            'receipt_logo' => Setting::get('receipt_logo', ''),
-            'receipt_show_logo' => Setting::get('receipt_show_logo', false),
-            'receipt_show_barcode' => Setting::get('receipt_show_barcode', false),
-            'receipt_show_tax_details' => Setting::get('receipt_show_tax_details', true),
+            'store_email' => Setting::get('store_email', ''),
+            'currency_symbol' => Setting::get('currency_symbol', 'K'),
         ];
 
-        return Inertia::render('orders/bulk-receipt', [
-            'orders' => $orders,
+        $pdf = Pdf::loadView('orders.invoice', [
+            'order' => $order,
             'settings' => $settings,
         ]);
+
+        return $pdf->download('invoice-' . $order->order_number . '.pdf');
     }
 }
 

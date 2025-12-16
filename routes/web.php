@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Products
     Route::resource('products', App\Http\Controllers\ProductController::class);
     Route::post('products/bulk-delete', [App\Http\Controllers\ProductController::class, 'bulkDelete'])->name('products.bulk-delete');
+    Route::post('products/import', [App\Http\Controllers\ProductController::class, 'import'])->name('products.import');
     
     // Product Variants
     Route::get('products/{product}/variants', [App\Http\Controllers\ProductVariantController::class, 'index'])->name('products.variants');
@@ -61,7 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('orders', App\Http\Controllers\OrderController::class)->except(['edit', 'update']);
     Route::patch('orders/{order}/status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('orders.update-status');
     Route::get('orders/{order}/receipt', [App\Http\Controllers\OrderController::class, 'receipt'])->name('orders.receipt');
-    Route::post('orders/bulk-receipt', [App\Http\Controllers\OrderController::class, 'bulkReceipt'])->name('orders.bulk-receipt');
+    Route::get('orders/{order}/invoice', [App\Http\Controllers\OrderController::class, 'invoice'])->name('orders.invoice');
     
     // Refunds
     Route::post('orders/{order}/refund', [App\Http\Controllers\RefundController::class, 'store'])->name('orders.refund');
@@ -74,6 +75,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('reports/yearly', [App\Http\Controllers\ReportController::class, 'yearly'])->name('reports.yearly');
     Route::get('reports/product-performance', [App\Http\Controllers\ReportController::class, 'productPerformance'])->name('reports.product-performance');
     Route::get('reports/cash-register', [App\Http\Controllers\ReportController::class, 'cashRegister'])->name('reports.cash-register');
+    Route::get('reports/profit-loss', [App\Http\Controllers\ReportController::class, 'profitLoss'])->name('reports.profit-loss');
+    Route::get('reports/sales-by-employee', [App\Http\Controllers\ReportController::class, 'salesByEmployee'])->name('reports.sales-by-employee');
+    Route::get('reports/customer-analytics', [App\Http\Controllers\ReportController::class, 'customerAnalytics'])->name('reports.customer-analytics');
+    Route::get('reports/inventory-valuation', [App\Http\Controllers\ReportController::class, 'inventoryValuation'])->name('reports.inventory-valuation');
     
     // Inventory
     Route::get('inventory', [App\Http\Controllers\InventoryController::class, 'index'])->name('inventory.index');
@@ -118,6 +123,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('purchase-orders/{purchaseOrder}/status', [App\Http\Controllers\PurchaseOrderController::class, 'updateStatus'])->name('purchase-orders.update-status');
     Route::resource('expenses', App\Http\Controllers\ExpenseController::class);
     Route::resource('tax-rates', App\Http\Controllers\TaxRateController::class);
+    
+    // Ways
+    Route::resource('ways', App\Http\Controllers\WayController::class);
+    Route::get('ways/list', [App\Http\Controllers\WayController::class, 'list'])->name('ways.list');
+    Route::post('ways/set-current', [App\Http\Controllers\WayController::class, 'setCurrent'])->name('ways.set-current');
+    
+    // Quotations
+    Route::resource('quotations', App\Http\Controllers\QuotationController::class);
+    Route::post('quotations/{quotation}/send', [App\Http\Controllers\QuotationController::class, 'send'])->name('quotations.send');
+    Route::post('quotations/{quotation}/convert', [App\Http\Controllers\QuotationController::class, 'convertToOrder'])->name('quotations.convert');
+    
+    // Stock Transfers
+    Route::resource('stock-transfers', App\Http\Controllers\StockTransferController::class);
+    Route::post('stock-transfers/{stockTransfer}/approve', [App\Http\Controllers\StockTransferController::class, 'approve'])->name('stock-transfers.approve');
+    Route::post('stock-transfers/{stockTransfer}/complete', [App\Http\Controllers\StockTransferController::class, 'complete'])->name('stock-transfers.complete');
+    
+    // Gift Cards
+    Route::resource('gift-cards', App\Http\Controllers\GiftCardController::class);
+    Route::post('gift-cards/{giftCard}/redeem', [App\Http\Controllers\GiftCardController::class, 'redeem'])->name('gift-cards.redeem');
+    
+    // Currencies
+    Route::resource('currencies', App\Http\Controllers\CurrencyController::class);
+    Route::post('currencies/{currency}/set-default', [App\Http\Controllers\CurrencyController::class, 'setDefault'])->name('currencies.set-default');
+    
+    // Activity Logs
+    Route::get('activity-logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
 });
 
 require __DIR__.'/settings.php';

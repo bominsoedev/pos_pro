@@ -259,7 +259,7 @@ export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrd
                                 {/* Items List */}
                                 {items.length > 0 && (
                                     <div className="mt-4">
-                                        <h3 className="font-semibold mb-2">{t('orders.items')}</h3>
+                                        <h3 className="font-semibold mb-2">{t('products.items')}</h3>
                                         <div className="space-y-2">
                                             {items.map((item, index) => (
                                                 <div key={index} className="border rounded-lg p-3">
@@ -281,7 +281,7 @@ export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrd
                                                     </div>
                                                     <div className="grid grid-cols-4 gap-2">
                                                         <div>
-                                                            <Label className="text-xs">{t('orders.quantity')}</Label>
+                                                            <Label className="text-xs">{t('products.quantity')}</Label>
                                                             <Input
                                                                 type="number"
                                                                 min="1"
@@ -357,7 +357,7 @@ export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrd
                                 </div>
 
                                 <div>
-                                    <Label>{t('purchase_orders.terms')}</Label>
+                                    <Label>Terms</Label>
                                     <Textarea
                                         value={data.terms}
                                         onChange={(e) => setData('terms', e.target.value)}

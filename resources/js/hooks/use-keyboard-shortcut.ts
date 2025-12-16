@@ -110,8 +110,16 @@ export function useKeyboardShortcut(
 export function formatShortcut(shortcut: Omit<KeyboardShortcut, 'callback'>): string {
     const parts: string[] = [];
     
-    if (shortcut.ctrl) parts.push('Ctrl');
-    if (shortcut.meta) parts.push('Cmd');
+    // Detect platform
+    const isMac = typeof window !== 'undefined' && (/Mac|iPhone|iPad|iPod/.test(navigator.platform) || /Mac|iPhone|iPad|iPod/.test(navigator.userAgent));
+    
+    // For Ctrl, use Cmd on Mac, Ctrl on Windows/Linux
+    if (shortcut.ctrl) {
+        parts.push(isMac ? 'Cmd' : 'Ctrl');
+    }
+    if (shortcut.meta) {
+        parts.push('Cmd');
+    }
     if (shortcut.alt) parts.push('Alt');
     if (shortcut.shift) parts.push('Shift');
     

@@ -113,7 +113,7 @@ export default function ProductPerformance({ products, filters }: ProductPerform
                     <CardContent className="pt-6">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                             <Input
-                                placeholder={`${t('products.search_products')} (${t('shortcuts.focus_search')}: /)`}
+                                placeholder={t('products.search_products')}
                                 defaultValue={filters.search}
                                 onChange={(e) => {
                                     router.get('/reports/product-performance', {

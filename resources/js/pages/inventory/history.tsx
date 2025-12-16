@@ -6,7 +6,6 @@ import { ArrowLeft, Package, TrendingUp, TrendingDown, Minus } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import Pagination from '@/components/pagination';
 import { type BreadcrumbItem } from '@/types';
-import { useTranslation } from '@/hooks/use-translation';
 
 interface InventoryLog {
     id: number;
@@ -54,16 +53,6 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
             return: 'outline',
         };
         return variants[type] || 'secondary';
-    };
-
-    const getTypeLabel = (type: string) => {
-        const labels: Record<string, string> = {
-            sale: t('inventory.type_sale'),
-            purchase: t('inventory.type_purchase'),
-            adjustment: t('inventory.type_adjustment'),
-            return: t('inventory.type_return'),
-        };
-        return labels[type] || type;
     };
 
     const formatDate = (date: string) => {

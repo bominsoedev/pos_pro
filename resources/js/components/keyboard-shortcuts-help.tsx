@@ -3,6 +3,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { Keyboard } from 'lucide-react';
 import { formatShortcut } from '@/hooks/use-keyboard-shortcut';
 import { dashboard } from '@/routes';
+import { getPlatformShortcut } from '@/lib/platform';
 
 interface KeyboardShortcutsHelpProps {
     open: boolean;
@@ -21,22 +22,22 @@ export default function KeyboardShortcutsHelp({ open, onOpenChange, shortcuts }:
     const { t } = useTranslation();
 
     const navigationShortcuts = [
-        { key: '1', ctrl: true, description: t('shortcuts.nav_dashboard') },
-        { key: '2', ctrl: true, description: t('shortcuts.nav_pos') },
-        { key: '3', ctrl: true, description: t('shortcuts.nav_products') },
-        { key: '4', ctrl: true, description: t('shortcuts.nav_categories') },
-        { key: '5', ctrl: true, description: t('shortcuts.nav_customers') },
-        { key: '6', ctrl: true, description: t('shortcuts.nav_orders') },
-        { key: '7', ctrl: true, description: t('shortcuts.nav_inventory') },
-        { key: '8', ctrl: true, description: t('shortcuts.nav_discounts') },
-        { key: '9', ctrl: true, description: t('shortcuts.nav_reports') },
-        { key: '0', ctrl: true, description: t('shortcuts.nav_shifts') },
-        { key: 'r', ctrl: true, shift: true, description: t('shortcuts.nav_roles') },
-        { key: 'u', ctrl: true, shift: true, description: t('shortcuts.nav_backup') },
-        { key: 's', ctrl: true, shift: true, description: t('shortcuts.nav_suppliers') },
-        { key: 'p', ctrl: true, shift: true, description: t('shortcuts.nav_purchase_orders') },
-        { key: 'e', ctrl: true, shift: true, description: t('shortcuts.nav_expenses') },
-        { key: 't', ctrl: true, shift: true, description: t('shortcuts.nav_tax_rates') },
+        { key: '1', ctrl: true, description: t('shortcuts.nav_dashboard'), displayShortcut: getPlatformShortcut('Ctrl+1') },
+        { key: '2', ctrl: true, description: t('shortcuts.nav_pos'), displayShortcut: getPlatformShortcut('Ctrl+2') },
+        { key: '3', ctrl: true, description: t('shortcuts.nav_products'), displayShortcut: getPlatformShortcut('Ctrl+3') },
+        { key: '4', ctrl: true, description: t('shortcuts.nav_categories'), displayShortcut: getPlatformShortcut('Ctrl+4') },
+        { key: '5', ctrl: true, description: t('shortcuts.nav_customers'), displayShortcut: getPlatformShortcut('Ctrl+5') },
+        { key: '6', ctrl: true, description: t('shortcuts.nav_orders'), displayShortcut: getPlatformShortcut('Ctrl+6') },
+        { key: '7', ctrl: true, description: t('shortcuts.nav_inventory'), displayShortcut: getPlatformShortcut('Ctrl+7') },
+        { key: '8', ctrl: true, description: t('shortcuts.nav_discounts'), displayShortcut: getPlatformShortcut('Ctrl+8') },
+        { key: '9', ctrl: true, description: t('shortcuts.nav_reports'), displayShortcut: getPlatformShortcut('Ctrl+9') },
+        { key: '0', ctrl: true, description: t('shortcuts.nav_shifts'), displayShortcut: getPlatformShortcut('Ctrl+0') },
+        { key: 'r', ctrl: true, shift: true, description: t('shortcuts.nav_roles'), displayShortcut: getPlatformShortcut('Ctrl+Shift+R') },
+        { key: 'u', ctrl: true, shift: true, description: t('shortcuts.nav_backup'), displayShortcut: getPlatformShortcut('Ctrl+Shift+U') },
+        { key: 's', ctrl: true, shift: true, description: t('shortcuts.nav_suppliers'), displayShortcut: getPlatformShortcut('Ctrl+Shift+S') },
+        { key: 'p', ctrl: true, shift: true, description: t('shortcuts.nav_purchase_orders'), displayShortcut: getPlatformShortcut('Ctrl+Shift+P') },
+        { key: 'e', ctrl: true, shift: true, description: t('shortcuts.nav_expenses'), displayShortcut: getPlatformShortcut('Ctrl+Shift+E') },
+        { key: 't', ctrl: true, shift: true, description: t('shortcuts.nav_tax_rates'), displayShortcut: getPlatformShortcut('Ctrl+Shift+T') },
     ];
 
     const defaultShortcuts = shortcuts || [
@@ -64,7 +65,7 @@ export default function KeyboardShortcutsHelp({ open, onOpenChange, shortcuts }:
                         {t('shortcuts.description')}
                     </DialogDescription>
                 </DialogHeader>
-                <div className="mt-4 space-y-4">
+                <div className="mt-4 space-y-2">
                     <div>
                         <h3 className="font-semibold mb-2">{t('shortcuts.global_shortcuts')}</h3>
                         <div className="space-y-2">
@@ -89,7 +90,7 @@ export default function KeyboardShortcutsHelp({ open, onOpenChange, shortcuts }:
                                         {shortcut.description}
                                     </span>
                                     <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600">
-                                        {formatShortcut(shortcut)}
+                                        {shortcut.displayShortcut || formatShortcut(shortcut)}
                                     </kbd>
                                 </div>
                             ))}

@@ -148,7 +148,7 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
                                         <thead className="bg-muted">
                                             <tr>
                                                 <th className="text-left p-2">{t('products.name')}</th>
-                                                <th className="text-right p-2">{t('orders.quantity')}</th>
+                                                <th className="text-right p-2">{t('products.quantity')}</th>
                                                 <th className="text-right p-2">{t('products.price')}</th>
                                                 <th className="text-right p-2">{t('pos.discount')}</th>
                                                 <th className="text-right p-2">{t('pos.total')}</th>
@@ -185,7 +185,7 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
 
                             {purchaseOrder.terms && (
                                 <div>
-                                    <p className="text-sm text-muted-foreground mb-1">{t('purchase_orders.terms')}</p>
+                                    <p className="text-sm text-muted-foreground mb-1">Terms</p>
                                     <p className="text-sm">{purchaseOrder.terms}</p>
                                 </div>
                             )}
@@ -221,7 +221,7 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
                                 </div>
                             </div>
                             <div className="pt-4 border-t">
-                                <p className="text-sm text-muted-foreground mb-1">{t('purchase_orders.created_by')}</p>
+                                <p className="text-sm text-muted-foreground mb-1">Created By</p>
                                 <div className="flex items-center gap-2">
                                     <User className="h-4 w-4" />
                                     <p className="text-sm">{purchaseOrder.user.name}</p>

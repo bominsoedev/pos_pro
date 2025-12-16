@@ -11,12 +11,6 @@ class SettingsSeeder extends Seeder
     {
         $settings = [
             [
-                'key' => 'app_name',
-                'value' => config('app.name', 'Laravel'),
-                'type' => 'string',
-                'description' => 'Application name',
-            ],
-            [
                 'key' => 'tax_rate',
                 'value' => '0',
                 'type' => 'float',

@@ -53,7 +53,7 @@ class SupplierController extends Controller
 
         Supplier::create($validated);
 
-        return redirect()->back()->with('success', 'messages.supplier_created');
+        return redirect()->back()->with('success', 'Supplier created successfully.');
     }
 
     public function update(Request $request, Supplier $supplier)
@@ -76,21 +76,21 @@ class SupplierController extends Controller
 
         $supplier->update($validated);
 
-        return redirect()->back()->with('success', 'messages.supplier_updated');
+        return redirect()->back()->with('success', 'Supplier updated successfully.');
     }
 
     public function destroy(Supplier $supplier)
     {
         if ($supplier->products()->count() > 0) {
-            return redirect()->back()->with('error', 'messages.supplier_cannot_delete_with_products');
+            return redirect()->back()->with('error', 'Cannot delete supplier with associated products.');
         }
 
         if ($supplier->purchaseOrders()->count() > 0) {
-            return redirect()->back()->with('error', 'messages.supplier_cannot_delete_with_orders');
+            return redirect()->back()->with('error', 'Cannot delete supplier with associated purchase orders.');
         }
 
         $supplier->delete();
 
-        return redirect()->back()->with('success', 'messages.supplier_deleted');
+        return redirect()->back()->with('success', 'Supplier deleted successfully.');
     }
 }

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Payment;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -232,6 +235,157 @@ class ReportController extends Controller
             'date' => $date,
             'payments' => $payments,
             'summary' => $summary,
+        ]);
+    }
+
+    public function profitLoss(Request $request)
+    {
+        $dateFrom = $request->get('date_from', now()->subMonth()->format('Y-m-d'));
+        $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+        
+        $startDate = Carbon::parse($dateFrom)->startOfDay();
+        $endDate = Carbon::parse($dateTo)->endOfDay();
+
+        // Revenue (Sales)
+        $orders = Order::whereBetween('created_at', [$startDate, $endDate])
+            ->where('status', 'completed')
+            ->get();
+        
+        $revenue = $orders->sum('total');
+        $costOfGoodsSold = 0;
+        
+        foreach ($orders as $order) {
+            foreach ($order->items as $item) {
+                $product = Product::find($item->product_id);
+                if ($product && $product->cost) {
+                    $costOfGoodsSold += $product->cost * $item->quantity;
+                }
+            }
+        }
+
+        // Expenses
+        $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $grossProfit = $revenue - $costOfGoodsSold;
+        $netProfit = $grossProfit - $expenses;
+        $grossMargin = $revenue > 0 ? ($grossProfit / $revenue) * 100 : 0;
+        $netMargin = $revenue > 0 ? ($netProfit / $revenue) * 100 : 0;
+
+        return Inertia::render('reports/profit-loss', [
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'revenue' => $revenue,
+            'cost_of_goods_sold' => $costOfGoodsSold,
+            'gross_profit' => $grossProfit,
+            'expenses' => $expenses,
+            'net_profit' => $netProfit,
+            'gross_margin' => $grossMargin,
+            'net_margin' => $netMargin,
+            'total_orders' => $orders->count(),
+        ]);
+    }
+
+    public function salesByEmployee(Request $request)
+    {
+        $dateFrom = $request->get('date_from', now()->subMonth()->format('Y-m-d'));
+        $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+        
+        $startDate = Carbon::parse($dateFrom)->startOfDay();
+        $endDate = Carbon::parse($dateTo)->endOfDay();
+
+        $employees = User::select(
+                'users.*',
+                DB::raw('COUNT(orders.id) as total_orders'),
+                DB::raw('SUM(orders.total) as total_sales'),
+                DB::raw('AVG(orders.total) as average_order_value')
+            )
+            ->join('orders', 'users.id', '=', 'orders.user_id')
+            ->where('orders.status', 'completed')
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->groupBy('users.id')
+            ->orderBy('total_sales', 'desc')
+            ->get();
+
+        return Inertia::render('reports/sales-by-employee', [
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'employees' => $employees,
+        ]);
+    }
+
+    public function customerAnalytics(Request $request)
+    {
+        $dateFrom = $request->get('date_from', now()->subYear()->format('Y-m-d'));
+        $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+        
+        $startDate = Carbon::parse($dateFrom)->startOfDay();
+        $endDate = Carbon::parse($dateTo)->endOfDay();
+
+        $customers = Customer::with(['orders' => function ($query) use ($startDate, $endDate) {
+            $query->where('status', 'completed')
+                ->whereBetween('created_at', [$startDate, $endDate]);
+        }])
+        ->whereHas('orders', function ($query) use ($startDate, $endDate) {
+            $query->where('status', 'completed')
+                ->whereBetween('created_at', [$startDate, $endDate]);
+        })
+        ->get()
+        ->map(function ($customer) {
+            $customerOrders = $customer->orders;
+            return [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'email' => $customer->email,
+                'phone' => $customer->phone,
+                'total_orders' => $customerOrders->count(),
+                'total_spent' => $customerOrders->sum('total'),
+                'average_order_value' => $customerOrders->count() > 0 ? $customerOrders->sum('total') / $customerOrders->count() : 0,
+                'lifetime_value' => $customer->total_spent,
+                'loyalty_points' => $customer->loyalty_points,
+                'loyalty_tier' => $customer->loyalty_tier,
+                'last_order_date' => $customerOrders->max('created_at'),
+            ];
+        })
+        ->sortByDesc('total_spent')
+        ->values();
+
+        return Inertia::render('reports/customer-analytics', [
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
+            'customers' => $customers,
+        ]);
+    }
+
+    public function inventoryValuation(Request $request)
+    {
+        $products = Product::where('track_inventory', true)
+            ->with('category')
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'sku' => $product->sku,
+                    'category' => $product->category?->name,
+                    'stock_quantity' => $product->stock_quantity,
+                    'cost' => $product->cost ?? 0,
+                    'total_value' => ($product->cost ?? 0) * $product->stock_quantity,
+                    'is_low_stock' => $product->isLowStock(),
+                ];
+            })
+            ->sortByDesc('total_value')
+            ->values();
+
+        $totalValue = $products->sum('total_value');
+        $lowStockValue = $products->where('is_low_stock', true)->sum('total_value');
+
+        return Inertia::render('reports/inventory-valuation', [
+            'products' => $products,
+            'total_value' => $totalValue,
+            'low_stock_value' => $lowStockValue,
+            'total_items' => $products->count(),
+            'low_stock_items' => $products->where('is_low_stock', true)->count(),
         ]);
     }
 }

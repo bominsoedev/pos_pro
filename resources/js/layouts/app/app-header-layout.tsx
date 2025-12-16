@@ -1,6 +1,7 @@
 import { AppContent } from '@/components/app-content';
 import { AppHeader } from '@/components/app-header';
 import { AppShell } from '@/components/app-shell';
+import Toast from '@/components/toast';
 import { type BreadcrumbItem } from '@/types';
 import type { PropsWithChildren } from 'react';
 
@@ -12,6 +13,7 @@ export default function AppHeaderLayout({
         <AppShell>
             <AppHeader breadcrumbs={breadcrumbs} />
             <AppContent>{children}</AppContent>
+            <Toast />
         </AppShell>
     );
 }

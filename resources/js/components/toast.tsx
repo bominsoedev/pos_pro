@@ -4,11 +4,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle2, XCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from '@/hooks/use-translation';
 
 const Toast = memo(function Toast() {
     const { flash } = usePage().props as any;
-    const { t } = useTranslation();
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [type, setType] = useState<'success' | 'error' | null>(null);
@@ -43,13 +41,9 @@ const Toast = memo(function Toast() {
                     )}
                     <div className="flex-1">
                         <AlertTitle>
-                            {type === 'success' ? t('messages.success') : t('messages.error')}
+                            {type === 'success' ? 'Success' : 'Error'}
                         </AlertTitle>
-                        <AlertDescription>
-                            {message && message.startsWith('messages.')
-                                ? (t(message as any) || message.replace('messages.', ''))
-                                : message}
-                        </AlertDescription>
+                        <AlertDescription>{message}</AlertDescription>
                     </div>
                     <Button
                         variant="ghost"

@@ -85,5 +85,15 @@ class Product extends Model
     {
         return $this->bundle()->exists();
     }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
+    public function primaryImage(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ProductImage::class)->where('is_primary', true);
+    }
 }
 

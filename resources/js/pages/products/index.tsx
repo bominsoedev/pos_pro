@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, memo, useEffect, useRef } from 'react';
+import { useState, useMemo, useCallback, memo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,6 @@ import { formatPrice } from '@/lib/currency';
 import Pagination from '@/components/pagination';
 import { useTranslation } from '@/hooks/use-translation';
 import { useDebounce } from '@/hooks/use-debounce';
-import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut';
 
 interface Product {
     id: number;
@@ -57,7 +56,6 @@ export default function ProductsIndex({ products, categories, filters }: Product
     const [uploading, setUploading] = useState(false);
     const [searchInput, setSearchInput] = useState(filters.search || '');
     const debouncedSearch = useDebounce(searchInput, 500);
-    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, put, processing, errors, reset } = useForm({
         name: '',
@@ -167,58 +165,6 @@ export default function ProductsIndex({ products, categories, filters }: Product
         }
     };
 
-    // Keyboard shortcuts for products page
-    useKeyboardShortcut([
-        {
-            key: 'n',
-            ctrl: true,
-            callback: () => {
-                if (!showDialog) {
-                    openDialog();
-                }
-            },
-            description: t('shortcuts.new_product'),
-        },
-        {
-            key: 's',
-            ctrl: true,
-            callback: (e) => {
-                if (showDialog && !processing) {
-                    e.preventDefault();
-                    handleSubmit(e as any);
-                }
-            },
-            description: t('shortcuts.save'),
-        },
-        {
-            key: '/',
-            callback: () => {
-                if (!showDialog) {
-                    searchInputRef.current?.focus();
-                    searchInputRef.current?.select();
-                }
-            },
-            description: t('shortcuts.focus_search'),
-        },
-        {
-            key: 'Delete',
-            callback: () => {
-                if (selectedProducts.length > 0 && !showDialog) {
-                    if (confirm(`${t('products.bulk_delete')} ${selectedProducts.length} ${t('products.products')}`)) {
-                        router.post('/products/bulk-delete', {
-                            ids: selectedProducts,
-                        }, {
-                            onSuccess: () => {
-                                setSelectedProducts([]);
-                            },
-                        });
-                    }
-                }
-            },
-            description: t('shortcuts.delete_selected'),
-        },
-    ], !showDialog);
-
     return (
         <AppLayout breadcrumbs={[{ title: t('nav.products'), href: '/products' }]}>
             <Head title={t('products.title')} />
@@ -276,10 +222,47 @@ export default function ProductsIndex({ products, categories, filters }: Product
                             <Download className="mr-2 h-4 w-4" />
                             {t('products.export_csv')}
                         </Button>
-                        <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90" title={t('shortcuts.new_product') + ' (Ctrl+N)'}>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = '.xlsx,.xls,.csv';
+                                input.onchange = async (e) => {
+                                    const file = (e.target as HTMLInputElement).files?.[0];
+                                    if (!file) return;
+                                    
+                                    const formData = new FormData();
+                                    formData.append('file', file);
+                                    
+                                    try {
+                                        const response = await fetch('/products/import', {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': (usePage().props as any).csrf_token || '',
+                                            },
+                                            body: formData,
+                                        });
+                                        
+                                        if (response.ok) {
+                                            router.reload();
+                                        } else {
+                                            alert('Import failed');
+                                        }
+                                    } catch (error) {
+                                        console.error('Import error:', error);
+                                        alert('Import failed');
+                                    }
+                                };
+                                input.click();
+                            }}
+                        >
+                            <Upload className="mr-2 h-4 w-4" />
+                            {t('common.import')}
+                        </Button>
+                        <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90">
                             <Plus className="mr-2 h-4 w-4" />
-                            <span>{t('products.add_product')}</span>
-                            <span className="ml-2 text-xs opacity-70">(Ctrl+N)</span>
+                            Add Product
                         </Button>
                     </div>
                 </div>
@@ -291,8 +274,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                             <div className="flex-1 relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    ref={searchInputRef}
-                                    placeholder={`${t('products.search_products')} (${t('shortcuts.focus_search')}: /)`}
+                                    placeholder={t('products.search_products')}
                                     className="pl-10"
                                     value={searchInput}
                                     onChange={(e) => {
@@ -668,8 +650,8 @@ export default function ProductsIndex({ products, categories, filters }: Product
                                 <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                                     {t('common.cancel')}
                                 </Button>
-                                <Button type="submit" disabled={processing} title={t('shortcuts.save') + ' (Ctrl+S)'}>
-                                    {editingProduct ? t('common.update') : t('common.create')} <span className="ml-2 text-xs opacity-70">(Ctrl+S)</span>
+                                <Button type="submit" disabled={processing}>
+                                    {editingProduct ? t('common.update') : t('common.create')}
                                 </Button>
                             </DialogFooter>
                         </form>

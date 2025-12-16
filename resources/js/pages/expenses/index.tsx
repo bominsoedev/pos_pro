@@ -156,7 +156,7 @@ export default function ExpensesIndex({ expenses, categories, filters }: Expense
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
-                                    placeholder={`${t('common.search')} (${t('shortcuts.focus_search')}: /)`}
+                                    placeholder={t('common.search')}
                                     className="pl-10"
                                     value={searchInput}
                                     onChange={(e) => setSearchInput(e.target.value)}
@@ -306,7 +306,7 @@ export default function ExpensesIndex({ expenses, categories, filters }: Expense
                                         {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
                                     </div>
                                     <div>
-                                        <Label>{t('expenses.expense_title')} *</Label>
+                                        <Label>{t('expenses.title')} *</Label>
                                         <Input
                                             value={data.title}
                                             onChange={(e) => setData('title', e.target.value)}

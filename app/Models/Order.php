@@ -15,6 +15,7 @@ class Order extends Model
         'order_number',
         'user_id',
         'customer_id',
+        'way_id',
         'status',
         'payment_status',
         'subtotal',
@@ -55,6 +56,11 @@ class Order extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function way(): BelongsTo
+    {
+        return $this->belongsTo(Way::class);
     }
 
     public function items(): HasMany

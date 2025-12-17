@@ -41,8 +41,8 @@ interface ActivityLogsPageProps {
 export default function ActivityLogsIndex({ logs, filters }: ActivityLogsPageProps) {
     const { t } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
-    const [logNameFilter, setLogNameFilter] = useState(filters.log_name || '');
-    const [eventFilter, setEventFilter] = useState(filters.event || '');
+    const [logNameFilter, setLogNameFilter] = useState(filters.log_name || 'all');
+    const [eventFilter, setEventFilter] = useState(filters.event || 'all');
     const [dateFrom, setDateFrom] = useState(filters.date_from || '');
     const [dateTo, setDateTo] = useState(filters.date_to || '');
     const debouncedSearch = useDebounce(searchInput, 500);
@@ -50,8 +50,8 @@ export default function ActivityLogsIndex({ logs, filters }: ActivityLogsPagePro
     useEffect(() => {
         router.get('/activity-logs', {
             search: debouncedSearch || undefined,
-            log_name: logNameFilter || undefined,
-            event: eventFilter || undefined,
+            log_name: logNameFilter === 'all' ? undefined : logNameFilter,
+            event: eventFilter === 'all' ? undefined : eventFilter,
             date_from: dateFrom || undefined,
             date_to: dateTo || undefined,
         }, {
@@ -101,12 +101,12 @@ export default function ActivityLogsIndex({ logs, filters }: ActivityLogsPagePro
                                     onChange={(e) => setSearchInput(e.target.value)}
                                 />
                             </div>
-                            <Select value={logNameFilter} onValueChange={setLogNameFilter}>
+                            <Select value={logNameFilter || 'all'} onValueChange={setLogNameFilter}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Log Name" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">{t('common.all')}</SelectItem>
+                                    <SelectItem value="all">{t('common.all')}</SelectItem>
                                     <SelectItem value="products">Products</SelectItem>
                                     <SelectItem value="orders">Orders</SelectItem>
                                     <SelectItem value="customers">Customers</SelectItem>
@@ -115,12 +115,12 @@ export default function ActivityLogsIndex({ logs, filters }: ActivityLogsPagePro
                                     <SelectItem value="gift-cards">Gift Cards</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Select value={eventFilter} onValueChange={setEventFilter}>
+                            <Select value={eventFilter || 'all'} onValueChange={setEventFilter}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Event" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">{t('common.all')}</SelectItem>
+                                    <SelectItem value="all">{t('common.all')}</SelectItem>
                                     <SelectItem value="POST">POST</SelectItem>
                                     <SelectItem value="PUT">PUT</SelectItem>
                                     <SelectItem value="PATCH">PATCH</SelectItem>

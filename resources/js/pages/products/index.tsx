@@ -7,12 +7,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Package, Upload, X, Download, Barcode, Printer } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Package, Upload, X, Download, Barcode, Printer, CheckCircle2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { formatPrice } from '@/lib/currency';
 import Pagination from '@/components/pagination';
 import { useTranslation } from '@/hooks/use-translation';
 import { useDebounce } from '@/hooks/use-debounce';
+
+interface ProductImage {
+    id: number;
+    image_url: string;
+    alt_text: string | null;
+    sort_order: number;
+    is_primary: boolean;
+}
 
 interface Product {
     id: number;
@@ -29,6 +37,7 @@ interface Product {
     is_active: boolean;
     track_inventory: boolean;
     category: { id: number; name: string } | null;
+    images?: ProductImage[];
 }
 
 interface ProductsPageProps {
@@ -53,6 +62,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [productImages, setProductImages] = useState<Array<{ id?: number; image_url: string; is_primary: boolean; sort_order: number }>>([]);
     const [uploading, setUploading] = useState(false);
     const [searchInput, setSearchInput] = useState(filters.search || '');
     const debouncedSearch = useDebounce(searchInput, 500);
@@ -68,6 +78,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
         low_stock_threshold: 10,
         barcode: '',
         image: '',
+        images: [] as string[],
         is_active: true,
         track_inventory: true,
     });
@@ -75,6 +86,14 @@ export default function ProductsIndex({ products, categories, filters }: Product
     const openDialog = (product?: Product) => {
         if (product) {
             setEditingProduct(product);
+            const images = product.images || [];
+            const imageUrls = images.map(img => img.image_url);
+            setProductImages(images.map(img => ({
+                id: img.id,
+                image_url: img.image_url,
+                is_primary: img.is_primary,
+                sort_order: img.sort_order,
+            })));
             setData({
                 name: product.name,
                 sku: product.sku || '',
@@ -86,48 +105,139 @@ export default function ProductsIndex({ products, categories, filters }: Product
                 low_stock_threshold: Number(product.low_stock_threshold) || 10,
                 barcode: product.barcode || '',
                 image: product.image || '',
+                images: imageUrls,
                 is_active: product.is_active,
                 track_inventory: product.track_inventory,
             });
-            setImagePreview(product.image || null);
+            setImagePreview(product.image || (images.length > 0 ? images[0].image_url : null));
         } else {
             setEditingProduct(null);
             reset();
             setImagePreview(null);
+            setProductImages([]);
         }
         setShowDialog(true);
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
 
         setUploading(true);
-        const formData = new FormData();
-        formData.append('image', file);
-
+        
         try {
-            const response = await fetch('/images/upload', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': (usePage().props as any).csrf_token || '',
-                },
-                body: formData,
+            const uploadPromises = Array.from(files).map(async (file) => {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch('/images/upload', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': (usePage().props as any).csrf_token || '',
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Image upload failed');
+                }
+
+                return await response.json();
             });
 
-            if (!response.ok) {
-                throw new Error('Image upload failed');
-            }
+            const results = await Promise.all(uploadPromises);
+            const newImages = results.map((result, index) => ({
+                image_url: result.url,
+                is_primary: productImages.length === 0 && index === 0,
+                sort_order: productImages.length + index,
+            }));
 
-            const result = await response.json();
-            setData('image', result.url);
-            setImagePreview(result.url);
+            const updatedImages = [...productImages, ...newImages];
+            setProductImages(updatedImages);
+            
+            const imageUrls = updatedImages.map(img => img.image_url);
+            setData('images', imageUrls);
+            
+            // Set first image as preview and primary
+            if (updatedImages.length > 0 && !imagePreview) {
+                setImagePreview(updatedImages[0].image_url);
+                setData('image', updatedImages[0].image_url);
+            }
         } catch (error) {
             console.error('Upload error:', error);
             alert(t('common_errors.upload_image_failed'));
         } finally {
             setUploading(false);
+            // Reset file input
+            e.target.value = '';
         }
+    };
+
+    const handleDeleteImage = async (index: number) => {
+        const image = productImages[index];
+        if (image.id && editingProduct) {
+            // Delete from server
+            try {
+                const response = await fetch(`/products/${editingProduct.id}/images/${image.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': (usePage().props as any).csrf_token || '',
+                    },
+                });
+                if (!response.ok) throw new Error('Delete failed');
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('Failed to delete image');
+                return;
+            }
+        }
+
+        const updatedImages = productImages.filter((_, i) => i !== index);
+        // Reorder sort_order
+        updatedImages.forEach((img, i) => {
+            img.sort_order = i;
+            if (i === 0) img.is_primary = true;
+            else img.is_primary = false;
+        });
+        
+        setProductImages(updatedImages);
+        const imageUrls = updatedImages.map(img => img.image_url);
+        setData('images', imageUrls);
+        
+        if (updatedImages.length > 0) {
+            setImagePreview(updatedImages[0].image_url);
+            setData('image', updatedImages[0].image_url);
+        } else {
+            setImagePreview(null);
+            setData('image', '');
+        }
+    };
+
+    const handleSetPrimary = async (index: number) => {
+        const image = productImages[index];
+        if (image.id && editingProduct) {
+            try {
+                const response = await fetch(`/products/${editingProduct.id}/images/${image.id}/set-primary`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': (usePage().props as any).csrf_token || '',
+                    },
+                });
+                if (!response.ok) throw new Error('Set primary failed');
+            } catch (error) {
+                console.error('Set primary error:', error);
+                alert('Failed to set primary image');
+                return;
+            }
+        }
+
+        const updatedImages = productImages.map((img, i) => ({
+            ...img,
+            is_primary: i === index,
+        }));
+        setProductImages(updatedImages);
+        setImagePreview(image.image_url);
+        setData('image', image.image_url);
     };
 
     // Debounced search effect
@@ -146,12 +256,17 @@ export default function ProductsIndex({ products, categories, filters }: Product
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Ensure images array is set
+        const imageUrls = productImages.map(img => img.image_url);
+        setData('images', imageUrls);
+        
         if (editingProduct) {
             put(`/products/${editingProduct.id}`, {
                 onSuccess: () => {
                     setShowDialog(false);
                     reset();
                     setImagePreview(null);
+                    setProductImages([]);
                 },
             });
         } else {
@@ -160,6 +275,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                     setShowDialog(false);
                     reset();
                     setImagePreview(null);
+                    setProductImages([]);
                 },
             });
         }
@@ -523,7 +639,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                                     )}
                                 </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <Label>{t('products.price')} *</Label>
                                     <Input
@@ -562,67 +678,79 @@ export default function ProductsIndex({ products, categories, filters }: Product
                                         onChange={(e) => setData('low_stock_threshold', parseInt(e.target.value))}
                                     />
                                 </div>
-                                <div>
-                                    <Label>{t('products.image')}</Label>
-                                    <div className="space-y-2">
-                                        {imagePreview && (
-                                            <div className="relative w-32 h-32 border rounded-md overflow-hidden">
-                                                <img
-                                                    src={imagePreview}
-                                                    alt="Preview"
-                                                    className="w-full h-full object-cover"
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    variant="destructive"
-                                                    size="icon"
-                                                    className="absolute top-1 right-1 h-6 w-6"
-                                                    onClick={() => {
-                                                        setImagePreview(null);
-                                                        setData('image', '');
-                                                    }}
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </Button>
-                                            </div>
-                                        )}
-                                        <div className="flex items-center gap-2">
-                                            <Input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageUpload}
-                                                disabled={uploading}
-                                                className="hidden"
-                                                id="image-upload"
-                                            />
-                                            <Label
-                                                htmlFor="image-upload"
-                                                className="cursor-pointer"
-                                            >
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    disabled={uploading}
-                                                    asChild
-                                                >
-                                                    <span>
-                                                        <Upload className="h-4 w-4 mr-2" />
-                                                        {uploading ? t('products.uploading') : t('products.upload_image')}
-                                                    </span>
-                                                </Button>
-                                            </Label>
-                                            <span className="text-xs text-muted-foreground">
-                                                {t('products.or_enter_url')}
-                                            </span>
+                            </div>
+                            <div>
+                                <Label>{t('products.images')}</Label>
+                                <div className="space-y-2">
+                                    {productImages.length > 0 && (
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {productImages.map((img, index) => (
+                                                <div key={index} className="relative group">
+                                                    <div className={`relative w-full h-32 border-2 rounded-md overflow-hidden ${img.is_primary ? 'border-primary' : 'border-border'}`}>
+                                                        <img
+                                                            src={img.image_url}
+                                                            alt={`Product image ${index + 1}`}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        {img.is_primary && (
+                                                            <div className="absolute top-1 left-1 bg-primary text-primary-foreground text-xs px-1 rounded">
+                                                                {t('products.primary')}
+                                                            </div>
+                                                        )}
+                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                                            <Button
+                                                                type="button"
+                                                                variant="secondary"
+                                                                size="icon"
+                                                                className="h-8 w-8"
+                                                                onClick={() => handleSetPrimary(index)}
+                                                                disabled={img.is_primary}
+                                                                title={t('products.set_primary')}
+                                                            >
+                                                                <CheckCircle2 className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                type="button"
+                                                                variant="destructive"
+                                                                size="icon"
+                                                                className="h-8 w-8"
+                                                                onClick={() => handleDeleteImage(index)}
+                                                                title={t('common.delete')}
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
+                                    )}
+                                    <div className="flex items-center gap-2">
                                         <Input
-                                            placeholder={t('products.or_enter_image_url')}
-                                            value={data.image}
-                                            onChange={(e) => {
-                                                setData('image', e.target.value);
-                                                setImagePreview(e.target.value || null);
-                                            }}
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            onChange={handleImageUpload}
+                                            disabled={uploading}
+                                            className="hidden"
+                                            id="image-upload"
                                         />
+                                        <Label
+                                            htmlFor="image-upload"
+                                            className="cursor-pointer"
+                                        >
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                disabled={uploading}
+                                                asChild
+                                            >
+                                                <span>
+                                                    <Upload className="h-4 w-4 mr-2" />
+                                                    {uploading ? t('products.uploading') : t('products.upload_images')}
+                                                </span>
+                                            </Button>
+                                        </Label>
                                     </div>
                                 </div>
                             </div>

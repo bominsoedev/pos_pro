@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { Package, AlertTriangle, DollarSign } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
@@ -47,6 +48,37 @@ export default function InventoryValuationReport({
                         <h1 className="text-2xl font-bold">Inventory Valuation</h1>
                         <p className="text-muted-foreground">Current inventory value and stock levels</p>
                     </div>
+                </div>
+
+                {/* Report Navigation */}
+                <div className="flex gap-2 print:hidden flex-wrap mb-4">
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/daily">{t('reports.daily')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/monthly">{t('reports.monthly')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/yearly">{t('reports.yearly')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/product-performance">{t('reports.product_performance')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/cash-register">{t('reports.cash_register')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/profit-loss">{t('reports.profit_loss')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/sales-by-employee">{t('reports.sales_by_employee')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/customer-analytics">{t('reports.customer_analytics')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/inventory-valuation">{t('reports.inventory_valuation')}</Link>
+                    </Button>
                 </div>
 
                 {/* Summary Cards */}

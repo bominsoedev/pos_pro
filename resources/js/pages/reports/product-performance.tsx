@@ -106,6 +106,18 @@ export default function ProductPerformance({ products, filters }: ProductPerform
                     <Button variant="outline" size="sm" asChild>
                         <Link href="/reports/cash-register">{t('reports.cash_register')}</Link>
                     </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/profit-loss">{t('reports.profit_loss')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/sales-by-employee">{t('reports.sales_by_employee')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/customer-analytics">{t('reports.customer_analytics')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/inventory-valuation">{t('reports.inventory_valuation')}</Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}

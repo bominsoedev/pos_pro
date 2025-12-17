@@ -79,14 +79,14 @@ export default function GiftCardCreate({ customers }: GiftCardCreateProps) {
                             <div>
                                 <Label>{t('quotations.customer')}</Label>
                                 <Select
-                                    value={data.customer_id?.toString() || ''}
-                                    onValueChange={(value) => setData('customer_id', value ? parseInt(value) : null)}
+                                    value={data.customer_id?.toString() || 'none'}
+                                    onValueChange={(value) => setData('customer_id', value === 'none' ? null : parseInt(value))}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('quotations.customer')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('notifications.walk_in_customer')}</SelectItem>
+                                        <SelectItem value="none">{t('notifications.walk_in_customer')}</SelectItem>
                                         {customers.map((customer) => (
                                             <SelectItem key={customer.id} value={customer.id.toString()}>
                                                 {customer.name}

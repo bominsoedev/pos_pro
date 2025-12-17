@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-import { ArrowLeft, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, RotateCcw, CheckCircle2, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
 import { formatCurrency } from '@/lib/currency';
@@ -208,6 +208,15 @@ export default function OrderShow({ order }: OrderShowProps) {
                         <Badge variant={order.payment_status === 'paid' ? 'default' : 'secondary'}>
                             {t(`orders.${order.payment_status}`)}
                         </Badge>
+                        <Button
+                            variant="outline"
+                            asChild
+                        >
+                            <a href={`/orders/${order.id}/invoice`} target="_blank" rel="noopener noreferrer">
+                                <FileDown className="mr-2 h-4 w-4" />
+                                {t('orders.download_invoice')}
+                            </a>
+                        </Button>
                         {canRefund && (
                             <Button
                                 variant="outline"

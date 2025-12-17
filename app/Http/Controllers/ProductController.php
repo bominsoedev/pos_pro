@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('category');
+        $query = Product::with(['category', 'images']);
 
         if ($request->search) {
             $query->where(function ($q) use ($request) {
@@ -56,11 +58,27 @@ class ProductController extends Controller
             'low_stock_threshold' => 'required|integer|min:0',
             'barcode' => 'nullable|string|max:255',
             'image' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'nullable|string',
             'is_active' => 'boolean',
             'track_inventory' => 'boolean',
         ]);
 
-        Product::create($validated);
+        $product = Product::create($validated);
+
+        // Handle multiple images
+        if ($request->has('images') && is_array($request->images)) {
+            foreach ($request->images as $index => $imageUrl) {
+                if ($imageUrl) {
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_url' => $imageUrl,
+                        'sort_order' => $index,
+                        'is_primary' => $index === 0,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->back()->with('success', 'Product created successfully.');
     }
@@ -78,11 +96,58 @@ class ProductController extends Controller
             'low_stock_threshold' => 'required|integer|min:0',
             'barcode' => 'nullable|string|max:255',
             'image' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'nullable|string',
             'is_active' => 'boolean',
             'track_inventory' => 'boolean',
         ]);
 
         $product->update($validated);
+
+        // Handle multiple images - update existing images
+        if ($request->has('images') && is_array($request->images)) {
+            $newImageUrls = array_filter($request->images);
+            $existingImages = $product->images()->get();
+            $existingUrls = $existingImages->pluck('image_url')->toArray();
+            
+            // Delete images that are no longer in the new list
+            $imagesToDelete = $existingImages->filter(function ($img) use ($newImageUrls) {
+                return !in_array($img->image_url, $newImageUrls);
+            });
+            foreach ($imagesToDelete as $img) {
+                $img->delete();
+            }
+            
+            // Update or create images
+            foreach ($newImageUrls as $index => $imageUrl) {
+                if ($imageUrl) {
+                    $existingImage = $existingImages->firstWhere('image_url', $imageUrl);
+                    
+                    if ($existingImage) {
+                        // Update existing image
+                        $existingImage->update([
+                            'sort_order' => $index,
+                            'is_primary' => $index === 0,
+                        ]);
+                    } else {
+                        // Create new image
+                        ProductImage::create([
+                            'product_id' => $product->id,
+                            'image_url' => $imageUrl,
+                            'sort_order' => $index,
+                            'is_primary' => $index === 0,
+                        ]);
+                    }
+                }
+            }
+            
+            // Ensure only one primary image
+            $product->images()->where('is_primary', true)->update(['is_primary' => false]);
+            $firstImage = $product->images()->orderBy('sort_order')->first();
+            if ($firstImage) {
+                $firstImage->update(['is_primary' => true]);
+            }
+        }
 
         return redirect()->back()->with('success', 'Product updated successfully.');
     }
@@ -184,6 +249,55 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Import failed: ' . $e->getMessage());
         }
+    }
+
+    public function storeImage(Request $request, Product $product)
+    {
+        $request->validate([
+            'image' => 'required|string',
+            'is_primary' => 'nullable|boolean',
+            'sort_order' => 'nullable|integer',
+        ]);
+
+        if ($request->is_primary) {
+            $product->images()->update(['is_primary' => false]);
+        }
+
+        $image = $product->images()->create([
+            'image_url' => $request->image,
+            'is_primary' => $request->is_primary ?? false,
+            'sort_order' => $request->sort_order ?? $product->images()->count(),
+        ]);
+
+        return response()->json($image);
+    }
+
+    public function deleteImage(Product $product, ProductImage $image)
+    {
+        if ($image->product_id !== $product->id) {
+            return response()->json(['error' => 'Image does not belong to this product'], 403);
+        }
+
+        // Delete file from storage if needed
+        if (Storage::disk('public')->exists(str_replace('/storage/', '', $image->image_url))) {
+            Storage::disk('public')->delete(str_replace('/storage/', '', $image->image_url));
+        }
+
+        $image->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function setPrimaryImage(Product $product, ProductImage $image)
+    {
+        if ($image->product_id !== $product->id) {
+            return response()->json(['error' => 'Image does not belong to this product'], 403);
+        }
+
+        $product->images()->update(['is_primary' => false]);
+        $image->update(['is_primary' => true]);
+
+        return response()->json(['success' => true]);
     }
 }
 

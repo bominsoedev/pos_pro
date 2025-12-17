@@ -22,6 +22,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('products', App\Http\Controllers\ProductController::class);
     Route::post('products/bulk-delete', [App\Http\Controllers\ProductController::class, 'bulkDelete'])->name('products.bulk-delete');
     Route::post('products/import', [App\Http\Controllers\ProductController::class, 'import'])->name('products.import');
+    Route::post('products/{product}/images', [App\Http\Controllers\ProductController::class, 'storeImage'])->name('products.images.store');
+    Route::delete('products/{product}/images/{image}', [App\Http\Controllers\ProductController::class, 'deleteImage'])->name('products.images.delete');
+    Route::post('products/{product}/images/{image}/set-primary', [App\Http\Controllers\ProductController::class, 'setPrimaryImage'])->name('products.images.set-primary');
     
     // Product Variants
     Route::get('products/{product}/variants', [App\Http\Controllers\ProductVariantController::class, 'index'])->name('products.variants');

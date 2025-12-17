@@ -272,7 +272,8 @@
         "reason_for_refund": "Reason for refund",
         "additional_notes": "Additional notes",
         "already_refunded": "Already Refunded",
-        "refunded_items": "Refunded Items"
+        "refunded_items": "Refunded Items",
+        "download_invoice": "Download Invoice"
     },
     "inventory": {
         "title": "Inventory",
@@ -344,7 +345,11 @@
         "mobile": "Mobile Payment",
         "bank_transfer": "Bank Transfer",
         "no_payments_found": "No payments found",
-        "no_product_data": "No product data found"
+        "no_product_data": "No product data found",
+        "profit_loss": "Profit & Loss",
+        "sales_by_employee": "Sales by Employee",
+        "customer_analytics": "Customer Analytics",
+        "inventory_valuation": "Inventory Valuation"
     },
     "discounts": {
         "title": "Discount Management",

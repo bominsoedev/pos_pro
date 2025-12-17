@@ -218,14 +218,14 @@ export default function QuotationEdit({ quotation, customers, ways, defaultTaxRa
                                     <div>
                                         <Label>{t('quotations.customer')}</Label>
                                         <Select
-                                            value={data.customer_id?.toString() || ''}
-                                            onValueChange={(value) => setData('customer_id', value ? parseInt(value) : null)}
+                                            value={data.customer_id?.toString() || 'none'}
+                                            onValueChange={(value) => setData('customer_id', value === 'none' ? null : parseInt(value))}
                                         >
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('quotations.customer')} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="">{t('notifications.walk_in_customer')}</SelectItem>
+                                                <SelectItem value="none">{t('notifications.walk_in_customer')}</SelectItem>
                                                 {customers.map((customer) => (
                                                     <SelectItem key={customer.id} value={customer.id.toString()}>
                                                         {customer.name}
@@ -251,14 +251,14 @@ export default function QuotationEdit({ quotation, customers, ways, defaultTaxRa
                                     <div>
                                         <Label>{t('ways.title')}</Label>
                                         <Select
-                                            value={data.way_id?.toString() || ''}
-                                            onValueChange={(value) => setData('way_id', value ? parseInt(value) : null)}
+                                            value={data.way_id?.toString() || 'none'}
+                                            onValueChange={(value) => setData('way_id', value === 'none' ? null : parseInt(value))}
                                         >
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('ways.title')} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="">{t('common.all')}</SelectItem>
+                                                <SelectItem value="none">{t('common.all')}</SelectItem>
                                                 {ways.map((way) => (
                                                     <SelectItem key={way.id} value={way.id.toString()}>
                                                         {way.name}

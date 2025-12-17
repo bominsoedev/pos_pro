@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
@@ -18,19 +19,23 @@ class Setting extends Model
 
     public static function get(string $key, $default = null)
     {
-        $setting = static::where('key', $key)->first();
-        
-        if (!$setting) {
-            return $default;
-        }
+        $cacheKey = "settings.{$key}";
 
-        return match ($setting->type) {
-            'boolean' => (bool) $setting->value,
-            'integer' => (int) $setting->value,
-            'float' => (float) $setting->value,
-            'json' => json_decode($setting->value, true),
-            default => $setting->value,
-        };
+        return Cache::rememberForever($cacheKey, function () use ($key, $default) {
+            $setting = static::where('key', $key)->first();
+            
+            if (!$setting) {
+                return $default;
+            }
+
+            return match ($setting->type) {
+                'boolean' => (bool) $setting->value,
+                'integer' => (int) $setting->value,
+                'float' => (float) $setting->value,
+                'json' => json_decode($setting->value, true),
+                default => $setting->value,
+            };
+        });
     }
 
     public static function set(string $key, $value, string $type = 'string', ?string $description = null): void
@@ -49,6 +54,9 @@ class Setting extends Model
         }
         
         $setting->save();
+
+        // Clear cache for this key so the new value is used
+        Cache::forget("settings.{$key}");
     }
 }
 

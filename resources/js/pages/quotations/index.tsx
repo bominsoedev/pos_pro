@@ -40,13 +40,13 @@ interface QuotationsPageProps {
 export default function QuotationsIndex({ quotations, filters }: QuotationsPageProps) {
     const { t } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
-    const [statusFilter, setStatusFilter] = useState(filters.status || '');
+    const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const debouncedSearch = useDebounce(searchInput, 500);
 
     useEffect(() => {
         router.get('/quotations', {
             search: debouncedSearch || undefined,
-            status: statusFilter || undefined,
+            status: statusFilter === 'all' ? undefined : statusFilter,
         }, {
             preserveState: true,
             preserveScroll: true,
@@ -87,12 +87,12 @@ export default function QuotationsIndex({ quotations, filters }: QuotationsPageP
                         <div className="flex items-center justify-between">
                             <CardTitle>{t('quotations.title')}</CardTitle>
                             <div className="flex items-center gap-2">
-                                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                <Select value={statusFilter || 'all'} onValueChange={setStatusFilter}>
                                     <SelectTrigger className="w-40">
                                         <SelectValue placeholder={t('common.all')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('common.all')}</SelectItem>
+                                        <SelectItem value="all">{t('common.all')}</SelectItem>
                                         <SelectItem value="draft">{t('quotations.draft')}</SelectItem>
                                         <SelectItem value="sent">{t('quotations.sent')}</SelectItem>
                                         <SelectItem value="accepted">{t('quotations.accepted')}</SelectItem>

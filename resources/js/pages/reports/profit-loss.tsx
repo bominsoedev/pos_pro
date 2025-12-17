@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { TrendingUp, TrendingDown, DollarSign, Calendar } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
@@ -56,6 +56,37 @@ export default function ProfitLossReport({
                         <h1 className="text-2xl font-bold">Profit & Loss Report</h1>
                         <p className="text-muted-foreground">Financial performance overview</p>
                     </div>
+                </div>
+
+                {/* Report Navigation */}
+                <div className="flex gap-2 print:hidden flex-wrap mb-4">
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/daily">{t('reports.daily')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/monthly">{t('reports.monthly')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/yearly">{t('reports.yearly')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/product-performance">{t('reports.product_performance')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/cash-register">{t('reports.cash_register')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/profit-loss">{t('reports.profit_loss')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/sales-by-employee">{t('reports.sales_by_employee')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/customer-analytics">{t('reports.customer_analytics')}</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/reports/inventory-valuation">{t('reports.inventory_valuation')}</Link>
+                    </Button>
                 </div>
 
                 {/* Date Filters */}

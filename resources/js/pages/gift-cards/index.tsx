@@ -39,13 +39,13 @@ interface GiftCardsPageProps {
 export default function GiftCardsIndex({ giftCards, filters }: GiftCardsPageProps) {
     const { t } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
-    const [statusFilter, setStatusFilter] = useState(filters.status || '');
+    const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const debouncedSearch = useDebounce(searchInput, 500);
 
     useEffect(() => {
         router.get('/gift-cards', {
             search: debouncedSearch || undefined,
-            status: statusFilter || undefined,
+            status: statusFilter === 'all' ? undefined : statusFilter,
         }, {
             preserveState: true,
             preserveScroll: true,
@@ -84,12 +84,12 @@ export default function GiftCardsIndex({ giftCards, filters }: GiftCardsPageProp
                         <div className="flex items-center justify-between">
                             <CardTitle>{t('gift_cards.title')}</CardTitle>
                             <div className="flex items-center gap-2">
-                                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                <Select value={statusFilter || 'all'} onValueChange={setStatusFilter}>
                                     <SelectTrigger className="w-40">
                                         <SelectValue placeholder={t('common.all')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('common.all')}</SelectItem>
+                                        <SelectItem value="all">{t('common.all')}</SelectItem>
                                         <SelectItem value="active">{t('gift_cards.active')}</SelectItem>
                                         <SelectItem value="used">{t('gift_cards.used')}</SelectItem>
                                         <SelectItem value="expired">{t('gift_cards.expired')}</SelectItem>

@@ -44,13 +44,13 @@ interface StockTransfersPageProps {
 export default function StockTransfersIndex({ transfers, filters }: StockTransfersPageProps) {
     const { t } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
-    const [statusFilter, setStatusFilter] = useState(filters.status || '');
+    const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const debouncedSearch = useDebounce(searchInput, 500);
 
     useEffect(() => {
         router.get('/stock-transfers', {
             search: debouncedSearch || undefined,
-            status: statusFilter || undefined,
+            status: statusFilter === 'all' ? undefined : statusFilter,
             from_way_id: filters.from_way_id,
             to_way_id: filters.to_way_id,
         }, {
@@ -92,12 +92,12 @@ export default function StockTransfersIndex({ transfers, filters }: StockTransfe
                         <div className="flex items-center justify-between">
                             <CardTitle>{t('stock_transfers.title')}</CardTitle>
                             <div className="flex items-center gap-2">
-                                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                <Select value={statusFilter || 'all'} onValueChange={setStatusFilter}>
                                     <SelectTrigger className="w-40">
                                         <SelectValue placeholder={t('common.all')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('common.all')}</SelectItem>
+                                        <SelectItem value="all">{t('common.all')}</SelectItem>
                                         <SelectItem value="pending">{t('stock_transfers.pending')}</SelectItem>
                                         <SelectItem value="approved">{t('stock_transfers.approved')}</SelectItem>
                                         <SelectItem value="in_transit">{t('stock_transfers.in_transit')}</SelectItem>

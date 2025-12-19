@@ -149,7 +149,7 @@ export default function WaysIndex({ ways: initialWays, filters = {} }: WaysPageP
                                         onCheckedChange={(checked) => setActiveOnly(checked === true)}
                                     />
                                     <Label htmlFor="active-only" className="text-sm font-normal cursor-pointer">
-                                        {t('common.active')} Only
+                                        {t('common.active')} {t('ways.active_only')}
                                     </Label>
                                 </div>
                                 <div className="relative w-64">

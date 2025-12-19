@@ -43,14 +43,14 @@ export default function SalesByEmployeeReport({
     return (
         <AppLayout breadcrumbs={[
             { title: t('nav.reports'), href: '/reports' },
-            { title: 'Sales by Employee', href: '/reports/sales-by-employee' },
+            { title: t('reports.sales_by_employee'), href: '/reports/sales-by-employee' },
         ]}>
-            <Head title="Sales by Employee" />
+            <Head title={t('reports.sales_by_employee')} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Sales by Employee</h1>
-                        <p className="text-muted-foreground">Performance by cashier</p>
+                        <h1 className="text-2xl font-bold">{t('reports.sales_by_employee')}</h1>
+                        <p className="text-muted-foreground">{t('reports.performance_by_cashier')}</p>
                     </div>
                 </div>
 
@@ -103,7 +103,7 @@ export default function SalesByEmployeeReport({
                                 value={dateTo}
                                 onChange={(e) => setDateTo(e.target.value)}
                             />
-                            <Button onClick={handleFilter}>Filter</Button>
+                            <Button onClick={handleFilter}>{t('common.filter')}</Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -111,13 +111,13 @@ export default function SalesByEmployeeReport({
                 {/* Employees List */}
                 <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                     <CardHeader>
-                        <CardTitle>Employee Performance</CardTitle>
+                        <CardTitle>{t('reports.employee_performance')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {employees.length === 0 ? (
                             <div className="text-center py-6">
                                 <User className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <h3 className="mt-4 text-lg font-semibold">No sales data found</h3>
+                                <h3 className="mt-4 text-lg font-semibold">{t('reports.no_sales_data_found')}</h3>
                             </div>
                         ) : (
                             <div className="space-y-2">
@@ -144,7 +144,7 @@ export default function SalesByEmployeeReport({
                                                         <p className="font-semibold text-lg">{formatCurrency(employee.total_sales)}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm text-muted-foreground">Avg. Order</p>
+                                                        <p className="text-sm text-muted-foreground">{t('reports.avg_order')}</p>
                                                         <p className="font-semibold">{formatCurrency(employee.average_order_value)}</p>
                                                     </div>
                                                 </div>
@@ -161,20 +161,20 @@ export default function SalesByEmployeeReport({
                 {employees.length > 0 && (
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader>
-                            <CardTitle>Summary</CardTitle>
+                            <CardTitle>{t('reports.summary')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Employees</p>
+                                    <p className="text-sm text-muted-foreground">{t('reports.total_employees')}</p>
                                     <p className="text-2xl font-bold">{employees.length}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Orders</p>
+                                    <p className="text-sm text-muted-foreground">{t('reports.total_orders')}</p>
                                     <p className="text-2xl font-bold">{employees.reduce((sum, e) => sum + e.total_orders, 0)}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Sales</p>
+                                    <p className="text-sm text-muted-foreground">{t('reports.total_sales')}</p>
                                     <p className="text-2xl font-bold text-primary">
                                         {formatCurrency(employees.reduce((sum, e) => sum + e.total_sales, 0))}
                                     </p>

@@ -299,7 +299,7 @@ export default function ShiftsIndex({ shifts, currentShift, filters }: ShiftsPag
                                 />
                             </div>
                             <div>
-                                <Label>Notes (Optional)</Label>
+                                <Label>{t('shifts.opening_notes')} ({t('common.optional')})</Label>
                                 <Textarea
                                     value={openData.opening_notes}
                                     onChange={(e) => setOpenData('opening_notes', e.target.value)}

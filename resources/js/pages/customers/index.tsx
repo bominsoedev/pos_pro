@@ -202,11 +202,11 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                         <div className="pt-2 border-t">
                                             <div className="flex items-center justify-between">
                                                 <div>
-                                                    <p className="text-xs text-muted-foreground">Credit Limit</p>
+                                                    <p className="text-xs text-muted-foreground">{t('customers.credit_limit')}</p>
                                                     <p className="font-semibold">{formatCurrency(customer.credit_limit)}</p>
                                                 </div>
                                                 <div>
-                                                    <p className="text-xs text-muted-foreground">Credit Balance</p>
+                                                    <p className="text-xs text-muted-foreground">{t('customers.credit_balance')}</p>
                                                     <p className={`font-semibold ${customer.credit_balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
                                                         {formatCurrency(customer.credit_balance)}
                                                     </p>
@@ -297,7 +297,7 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                 />
                             </div>
                             <div className="border-t pt-4">
-                                <h3 className="font-semibold mb-4">Credit Information</h3>
+                                <h3 className="font-semibold mb-4">{t('customers.credit_information')}</h3>
                                 <div className="flex items-center gap-2 mb-4">
                                     <input
                                         type="checkbox"
@@ -305,12 +305,12 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                         onChange={(e) => setData('allow_credit', e.target.checked)}
                                         className="rounded border-gray-300"
                                     />
-                                    <Label>Allow Credit</Label>
+                                    <Label>{t('customers.allow_credit')}</Label>
                                 </div>
                                 {data.allow_credit && (
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <Label>Credit Limit</Label>
+                                            <Label>{t('customers.credit_limit')}</Label>
                                             <Input
                                                 type="number"
                                                 step="0.01"
@@ -321,7 +321,7 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                             {errors.credit_limit && <p className="text-sm text-destructive">{errors.credit_limit}</p>}
                                         </div>
                                         <div>
-                                            <Label>Payment Terms (Days)</Label>
+                                            <Label>{t('customers.payment_terms_days')}</Label>
                                             <Input
                                                 type="number"
                                                 min="0"

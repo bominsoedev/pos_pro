@@ -396,7 +396,7 @@ export default function QuotationCreate({ customers, ways, defaultTaxRate, produ
                                 </div>
 
                                 <div>
-                                    <Label>Terms</Label>
+                                    <Label>{t('quotations.terms')}</Label>
                                     <Textarea
                                         value={data.terms}
                                         onChange={(e) => setData('terms', e.target.value)}

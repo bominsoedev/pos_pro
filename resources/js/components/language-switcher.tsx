@@ -19,58 +19,99 @@ interface LanguageSwitcherProps {
 }
 
 export function LanguageSwitcher({ variant = 'header' }: LanguageSwitcherProps) {
-    const { changeLanguage, currentLanguage } = useTranslation();
+    const { changeLanguage, currentLanguage, t } = useTranslation();
 
     const buttonClass = variant === 'sidebar' 
-        ? "w-full justify-start gap-2 h-auto py-2 px-2" 
+        ? "w-full justify-start gap-2 h-auto py-2 px-2 cursor-pointer" 
         : "h-9 w-9";
+
+    if (variant === 'sidebar') {
+        return (
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button 
+                        variant="ghost" 
+                        size="default"
+                        className={buttonClass}
+                    >
+                        <Languages className="h-5 w-5" />
+                        <span className="text-sm font-medium">
+                            {currentLanguage === 'en' ? t('common.english') : t('common.myanmar')}
+                        </span>
+                        <span className="sr-only">{t('common.change_language')}</span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="backdrop-blur-sm bg-background/95 min-w-[150px] z-50">
+                    <DropdownMenuItem
+                        onClick={() => changeLanguage('en')}
+                        className="cursor-pointer flex items-center justify-between"
+                    >
+                        <span className="flex-1">{t('common.english')}</span>
+                        {currentLanguage === 'en' && (
+                            <Check className="h-4 w-4 ml-2" />
+                        )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => changeLanguage('my')}
+                        className="cursor-pointer flex items-center justify-between"
+                    >
+                        <span className="flex-1">{t('common.myanmar')}</span>
+                        {currentLanguage === 'my' && (
+                            <Check className="h-4 w-4 ml-2" />
+                        )}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        );
+    }
+
+    const button = (
+        <Button 
+            variant="ghost" 
+            size="icon"
+            className={buttonClass}
+        >
+            <Languages className="h-5 w-5" />
+            <span className="sr-only">{t('common.change_language')}</span>
+        </Button>
+    );
+
+    const dropdownMenu = (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                {button}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="backdrop-blur-sm bg-background/95 min-w-[150px]">
+                <DropdownMenuItem
+                    onClick={() => changeLanguage('en')}
+                    className="cursor-pointer flex items-center justify-between"
+                >
+                    <span className="flex-1">{t('common.english')}</span>
+                    {currentLanguage === 'en' && (
+                        <Check className="h-4 w-4 ml-2" />
+                    )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => changeLanguage('my')}
+                    className="cursor-pointer flex items-center justify-between"
+                >
+                    <span className="flex-1">{t('common.myanmar')}</span>
+                    {currentLanguage === 'my' && (
+                        <Check className="h-4 w-4 ml-2" />
+                    )}
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 
     return (
         <TooltipProvider delayDuration={0}>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button 
-                                    variant="ghost" 
-                                    size={variant === 'sidebar' ? 'default' : 'icon'}
-                                    className={buttonClass}
-                                >
-                                    <Languages className="h-5 w-5" />
-                                    {variant === 'sidebar' && (
-                                        <span className="text-sm font-medium">
-                                            {currentLanguage === 'en' ? 'English' : 'မြန်မာ'}
-                                        </span>
-                                    )}
-                                    <span className="sr-only">Change language</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align={variant === 'sidebar' ? 'start' : 'end'} className="backdrop-blur-sm bg-background/95 min-w-[150px]">
-                                <DropdownMenuItem
-                                    onClick={() => changeLanguage('en')}
-                                    className="cursor-pointer flex items-center justify-between"
-                                >
-                                    <span className="flex-1">English</span>
-                                    {currentLanguage === 'en' && (
-                                        <Check className="h-4 w-4 ml-2" />
-                                    )}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => changeLanguage('my')}
-                                    className="cursor-pointer flex items-center justify-between"
-                                >
-                                    <span className="flex-1">မြန်မာ</span>
-                                    {currentLanguage === 'my' && (
-                                        <Check className="h-4 w-4 ml-2" />
-                                    )}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
+                    {dropdownMenu}
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>{currentLanguage === 'en' ? 'Switch to Myanmar' : 'Switch to English'}</p>
+                    <p>{currentLanguage === 'en' ? t('common.switch_to_myanmar') : t('common.switch_to_english')}</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

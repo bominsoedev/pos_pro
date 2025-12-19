@@ -378,7 +378,7 @@ export default function ExpensesIndex({ expenses, categories, filters }: Expense
                                     <Input
                                         value={data.receipt}
                                         onChange={(e) => setData('receipt', e.target.value)}
-                                        placeholder="Receipt URL or path"
+                                        placeholder={t('expenses.receipt_url_placeholder')}
                                     />
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -398,13 +398,13 @@ export default function ExpensesIndex({ expenses, categories, filters }: Expense
                                             onValueChange={(value) => setData('recurring_frequency', value)}
                                         >
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select frequency" />
+                                                <SelectValue placeholder={t('expenses.select_frequency')} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="daily">Daily</SelectItem>
-                                                <SelectItem value="weekly">Weekly</SelectItem>
-                                                <SelectItem value="monthly">Monthly</SelectItem>
-                                                <SelectItem value="yearly">Yearly</SelectItem>
+                                                <SelectItem value="daily">{t('reports.daily')}</SelectItem>
+                                                <SelectItem value="weekly">{t('expenses.weekly')}</SelectItem>
+                                                <SelectItem value="monthly">{t('reports.monthly')}</SelectItem>
+                                                <SelectItem value="yearly">{t('reports.yearly')}</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>

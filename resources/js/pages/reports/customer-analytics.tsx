@@ -52,20 +52,26 @@ export default function CustomerAnalyticsReport({
             gold: 'default',
             platinum: 'default',
         };
-        return <Badge variant={variants[tier] || 'secondary'}>{tier}</Badge>;
+        const tierTranslations: Record<string, string> = {
+            bronze: t('loyalty.bronze'),
+            silver: t('loyalty.silver'),
+            gold: t('loyalty.gold'),
+            platinum: t('loyalty.platinum'),
+        };
+        return <Badge variant={variants[tier] || 'secondary'}>{tierTranslations[tier] || tier}</Badge>;
     };
 
     return (
         <AppLayout breadcrumbs={[
             { title: t('nav.reports'), href: '/reports' },
-            { title: 'Customer Analytics', href: '/reports/customer-analytics' },
+            { title: t('reports.customer_analytics'), href: '/reports/customer-analytics' },
         ]}>
-            <Head title="Customer Analytics" />
+            <Head title={t('reports.customer_analytics')} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Customer Analytics</h1>
-                        <p className="text-muted-foreground">Customer lifetime value and behavior</p>
+                        <h1 className="text-2xl font-bold">{t('reports.customer_analytics')}</h1>
+                        <p className="text-muted-foreground">{t('reports.customer_lifetime_value')}</p>
                     </div>
                 </div>
 
@@ -118,7 +124,7 @@ export default function CustomerAnalyticsReport({
                                 value={dateTo}
                                 onChange={(e) => setDateTo(e.target.value)}
                             />
-                            <Button onClick={handleFilter}>Filter</Button>
+                            <Button onClick={handleFilter}>{t('common.filter')}</Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -126,13 +132,13 @@ export default function CustomerAnalyticsReport({
                 {/* Customers List */}
                 <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                     <CardHeader>
-                        <CardTitle>Customer Performance</CardTitle>
+                        <CardTitle>{t('reports.customer_performance')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {customers.length === 0 ? (
                             <div className="text-center py-6">
                                 <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <h3 className="mt-4 text-lg font-semibold">No customer data found</h3>
+                                <h3 className="mt-4 text-lg font-semibold">{t('reports.no_customer_data_found')}</h3>
                             </div>
                         ) : (
                             <div className="space-y-2">
@@ -163,11 +169,11 @@ export default function CustomerAnalyticsReport({
                                                         <p className="font-semibold">{customer.total_orders}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm text-muted-foreground">Period Sales</p>
+                                                        <p className="text-sm text-muted-foreground">{t('reports.period_sales')}</p>
                                                         <p className="font-semibold">{formatCurrency(customer.total_spent)}</p>
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm text-muted-foreground">Lifetime Value</p>
+                                                        <p className="text-sm text-muted-foreground">{t('reports.lifetime_value')}</p>
                                                         <p className="font-semibold text-lg text-primary">{formatCurrency(customer.lifetime_value)}</p>
                                                     </div>
                                                     <div>
@@ -188,26 +194,26 @@ export default function CustomerAnalyticsReport({
                 {customers.length > 0 && (
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader>
-                            <CardTitle>Summary</CardTitle>
+                            <CardTitle>{t('reports.summary')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-4 gap-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Customers</p>
+                                    <p className="text-sm text-muted-foreground">{t('reports.total_customers')}</p>
                                     <p className="text-2xl font-bold">{customers.length}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Orders</p>
+                                    <p className="text-sm text-muted-foreground">{t('reports.total_orders')}</p>
                                     <p className="text-2xl font-bold">{customers.reduce((sum, c) => sum + c.total_orders, 0)}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Period Sales</p>
+                                    <p className="text-sm text-muted-foreground">{t('reports.period_sales')}</p>
                                     <p className="text-2xl font-bold text-primary">
                                         {formatCurrency(customers.reduce((sum, c) => sum + c.total_spent, 0))}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Lifetime Value</p>
+                                    <p className="text-sm text-muted-foreground">{t('reports.total_lifetime_value')}</p>
                                     <p className="text-2xl font-bold text-green-600">
                                         {formatCurrency(customers.reduce((sum, c) => sum + c.lifetime_value, 0))}
                                     </p>

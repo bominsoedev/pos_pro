@@ -47,14 +47,14 @@ export default function ProfitLossReport({
     return (
         <AppLayout breadcrumbs={[
             { title: t('nav.reports'), href: '/reports' },
-            { title: 'Profit & Loss', href: '/reports/profit-loss' },
+            { title: t('reports.profit_loss'), href: '/reports/profit-loss' },
         ]}>
-            <Head title="Profit & Loss Report" />
+            <Head title={t('reports.profit_loss_report')} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Profit & Loss Report</h1>
-                        <p className="text-muted-foreground">Financial performance overview</p>
+                        <h1 className="text-2xl font-bold">{t('reports.profit_loss_report')}</h1>
+                        <p className="text-muted-foreground">{t('reports.financial_performance_overview')}</p>
                     </div>
                 </div>
 
@@ -107,7 +107,7 @@ export default function ProfitLossReport({
                                 value={dateTo}
                                 onChange={(e) => setDateTo(e.target.value)}
                             />
-                            <Button onClick={handleFilter}>Filter</Button>
+                            <Button onClick={handleFilter}>{t('common.filter')}</Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -116,47 +116,47 @@ export default function ProfitLossReport({
                 <div className="grid gap-4 md:grid-cols-4">
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.revenue')}</CardTitle>
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-green-600">{formatCurrency(revenue)}</div>
-                            <p className="text-xs text-muted-foreground">{total_orders} orders</p>
+                            <p className="text-xs text-muted-foreground">{total_orders} {t('reports.orders')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">COGS</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.cogs')}</CardTitle>
                             <TrendingDown className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-red-600">{formatCurrency(cost_of_goods_sold)}</div>
-                            <p className="text-xs text-muted-foreground">Cost of goods sold</p>
+                            <p className="text-xs text-muted-foreground">{t('reports.cost_of_goods_sold')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.gross_profit')}</CardTitle>
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-blue-600">{formatCurrency(gross_profit)}</div>
-                            <p className="text-xs text-muted-foreground">{gross_margin.toFixed(2)}% margin</p>
+                            <p className="text-xs text-muted-foreground">{gross_margin.toFixed(2)}% {t('reports.margin')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.net_profit')}</CardTitle>
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className={`text-2xl font-bold ${net_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                 {formatCurrency(net_profit)}
                             </div>
-                            <p className="text-xs text-muted-foreground">{net_margin.toFixed(2)}% margin</p>
+                            <p className="text-xs text-muted-foreground">{net_margin.toFixed(2)}% {t('reports.margin')}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -164,28 +164,28 @@ export default function ProfitLossReport({
                 {/* Detailed Breakdown */}
                 <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                     <CardHeader>
-                        <CardTitle>Financial Breakdown</CardTitle>
+                        <CardTitle>{t('reports.financial_breakdown')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
                             <div className="flex justify-between items-center border-b pb-2">
-                                <span className="font-medium">Revenue</span>
+                                <span className="font-medium">{t('reports.revenue')}</span>
                                 <span className="font-semibold">{formatCurrency(revenue)}</span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
-                                <span className="text-muted-foreground">Cost of Goods Sold</span>
+                                <span className="text-muted-foreground">{t('reports.cost_of_goods_sold')}</span>
                                 <span className="text-red-600">-{formatCurrency(cost_of_goods_sold)}</span>
                             </div>
                             <div className="flex justify-between items-center border-b-2 pb-2 font-semibold">
-                                <span>Gross Profit</span>
+                                <span>{t('reports.gross_profit')}</span>
                                 <span className="text-blue-600">{formatCurrency(gross_profit)} ({gross_margin.toFixed(2)}%)</span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
-                                <span className="text-muted-foreground">Expenses</span>
+                                <span className="text-muted-foreground">{t('reports.expenses')}</span>
                                 <span className="text-red-600">-{formatCurrency(expenses)}</span>
                             </div>
                             <div className="flex justify-between items-center pt-2 font-bold text-lg">
-                                <span>Net Profit</span>
+                                <span>{t('reports.net_profit')}</span>
                                 <span className={net_profit >= 0 ? 'text-green-600' : 'text-red-600'}>
                                     {formatCurrency(net_profit)} ({net_margin.toFixed(2)}%)
                                 </span>

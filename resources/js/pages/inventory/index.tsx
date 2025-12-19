@@ -129,13 +129,13 @@ export default function InventoryIndex({ products, lowStockCount, filters }: Inv
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b">
-                                        <th className="text-left p-2">Product</th>
-                                        <th className="text-left p-2">SKU</th>
-                                        <th className="text-left p-2">Category</th>
-                                        <th className="text-right p-2">Current Stock</th>
-                                        <th className="text-right p-2">Low Stock Threshold</th>
-                                        <th className="text-right p-2">Status</th>
-                                        <th className="text-right p-2">Actions</th>
+                                        <th className="text-left p-2">{t('inventory.product')}</th>
+                                        <th className="text-left p-2">{t('products.sku_label')}</th>
+                                        <th className="text-left p-2">{t('products.category')}</th>
+                                        <th className="text-right p-2">{t('inventory.current_stock')}</th>
+                                        <th className="text-right p-2">{t('products.low_stock_threshold')}</th>
+                                        <th className="text-right p-2">{t('orders.status')}</th>
+                                        <th className="text-right p-2">{t('inventory.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

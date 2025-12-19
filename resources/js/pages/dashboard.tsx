@@ -69,7 +69,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title={t('dashboard.title')} />
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6">
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -94,7 +94,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                         <CardContent>
                             <div className="text-2xl font-bold">{formatCurrency(stats.this_month.sales)}</div>
                             <p className="text-xs text-muted-foreground">
-                                {salesGrowth >= 0 ? '+' : ''}{salesGrowth.toFixed(1)}% from last month
+                                {salesGrowth >= 0 ? '+' : ''}{salesGrowth.toFixed(1)}% {t('dashboard.from_last_month')}
                             </p>
                         </CardContent>
                     </Card>
@@ -120,7 +120,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                         <CardContent>
                             <div className="text-2xl font-bold">{stats.total_customers}</div>
                             <p className="text-xs text-muted-foreground">
-                                {stats.this_month.customers} new this month
+                                {stats.this_month.customers} {t('dashboard.new_this_month')}
                             </p>
                         </CardContent>
                     </Card>
@@ -146,7 +146,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                 <div className="grid gap-4 md:grid-cols-2">
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader>
-                            <CardTitle>Sales Trend (Last 7 Days)</CardTitle>
+                            <CardTitle>{t('dashboard.sales_trend')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ResponsiveContainer width="100%" height={300}>
@@ -162,14 +162,14 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                                         type="monotone" 
                                         dataKey="sales" 
                                         stroke="#8884d8" 
-                                        name="Sales"
+                                        name={t('dashboard.sales')}
                                         strokeWidth={2}
                                     />
                                     <Line 
                                         type="monotone" 
                                         dataKey="orders" 
                                         stroke="#82ca9d" 
-                                        name="Orders"
+                                        name={t('dashboard.orders')}
                                         strokeWidth={2}
                                     />
                                 </LineChart>
@@ -179,7 +179,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader>
-                            <CardTitle>Monthly Sales Trend</CardTitle>
+                            <CardTitle>{t('dashboard.monthly_sales_trend')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ResponsiveContainer width="100%" height={300}>
@@ -191,8 +191,8 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                                         formatter={(value: number) => formatCurrency(value)}
                                     />
                                     <Legend />
-                                    <Bar dataKey="sales" fill="#8884d8" name="Sales" />
-                                    <Bar dataKey="orders" fill="#82ca9d" name="Orders" />
+                                    <Bar dataKey="sales" fill="#8884d8" name={t('dashboard.sales')} />
+                                    <Bar dataKey="orders" fill="#82ca9d" name={t('dashboard.orders')} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </CardContent>

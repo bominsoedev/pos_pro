@@ -217,7 +217,7 @@ export default function PosSettings({ settings }: PosSettingsProps) {
                                         <div className="relative w-32 h-32 border rounded-md overflow-hidden">
                                             <img
                                                 src={logoPreview}
-                                                alt="Logo Preview"
+                                                alt={t('settings.logo_preview')}
                                                 className="w-full h-full object-contain"
                                             />
                                             <Button

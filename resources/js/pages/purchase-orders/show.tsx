@@ -221,7 +221,7 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
                                 </div>
                             </div>
                             <div className="pt-4 border-t">
-                                <p className="text-sm text-muted-foreground mb-1">Created By</p>
+                                <p className="text-sm text-muted-foreground mb-1">{t('common.created_by')}</p>
                                 <div className="flex items-center gap-2">
                                     <User className="h-4 w-4" />
                                     <p className="text-sm">{purchaseOrder.user.name}</p>

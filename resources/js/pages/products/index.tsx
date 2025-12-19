@@ -378,7 +378,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                         </Button>
                         <Button onClick={() => openDialog()} className="backdrop-blur-sm bg-primary/90">
                             <Plus className="mr-2 h-4 w-4" />
-                            Add Product
+                            {t('products.add_product')}
                         </Button>
                     </div>
                 </div>
@@ -632,7 +632,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                                         <div className="mt-2">
                                             <img
                                                 src={`/products/${editingProduct.id}/barcode?format=png`}
-                                                alt="Barcode"
+                                                alt={t('products.barcode')}
                                                 className="h-16"
                                             />
                                         </div>

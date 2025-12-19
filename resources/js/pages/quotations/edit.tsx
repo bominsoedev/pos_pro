@@ -413,7 +413,7 @@ export default function QuotationEdit({ quotation, customers, ways, defaultTaxRa
                                 </div>
 
                                 <div>
-                                    <Label>Terms</Label>
+                                    <Label>{t('quotations.terms')}</Label>
                                     <Textarea
                                         value={data.terms}
                                         onChange={(e) => setData('terms', e.target.value)}

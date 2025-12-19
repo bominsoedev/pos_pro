@@ -357,7 +357,7 @@ export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrd
                                 </div>
 
                                 <div>
-                                    <Label>Terms</Label>
+                                    <Label>{t('purchase_orders.terms')}</Label>
                                     <Textarea
                                         value={data.terms}
                                         onChange={(e) => setData('terms', e.target.value)}

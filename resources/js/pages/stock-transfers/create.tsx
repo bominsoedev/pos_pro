@@ -306,7 +306,7 @@ export default function StockTransferCreate({ ways, products: initialProducts }:
                                                             <Input
                                                                 value={item.notes}
                                                                 onChange={(e) => updateItem(index, 'notes', e.target.value)}
-                                                                placeholder="Optional"
+                                                                placeholder={t('common.optional')}
                                                             />
                                                         </div>
                                                     </div>

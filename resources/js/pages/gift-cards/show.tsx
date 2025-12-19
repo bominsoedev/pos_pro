@@ -251,7 +251,7 @@ export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
                                         type="number"
                                         value={data.order_id || ''}
                                         onChange={(e) => setData('order_id', e.target.value ? parseInt(e.target.value) : null)}
-                                        placeholder="Optional"
+                                        placeholder={t('common.optional')}
                                     />
                                     {errors.order_id && <p className="text-sm text-destructive">{errors.order_id}</p>}
                                 </div>
@@ -260,7 +260,7 @@ export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
                                     <Input
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
-                                        placeholder="Optional"
+                                        placeholder={t('common.optional')}
                                     />
                                     {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
                                 </div>

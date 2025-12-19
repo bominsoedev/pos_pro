@@ -268,7 +268,7 @@ export default function StockTransferShow({ transfer }: StockTransferShowProps) 
                             </div>
                             {transfer.approvedBy && (
                                 <div className="pt-2">
-                                    <p className="text-sm text-muted-foreground mb-1">Approved By</p>
+                                    <p className="text-sm text-muted-foreground mb-1">{t('common.approved_by')}</p>
                                     <p className="text-sm">{transfer.approvedBy.name}</p>
                                     {transfer.approved_at && (
                                         <p className="text-xs text-muted-foreground mt-1">

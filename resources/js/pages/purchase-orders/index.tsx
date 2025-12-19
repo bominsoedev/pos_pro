@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/currency';
 import { useTranslation } from '@/hooks/use-translation';
 import { useDebounce } from '@/hooks/use-debounce';
+import Pagination from '@/components/pagination';
 
 interface PurchaseOrder {
     id: number;

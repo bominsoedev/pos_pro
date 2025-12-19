@@ -39,14 +39,14 @@ export default function InventoryValuationReport({
     return (
         <AppLayout breadcrumbs={[
             { title: t('nav.reports'), href: '/reports' },
-            { title: 'Inventory Valuation', href: '/reports/inventory-valuation' },
+            { title: t('reports.inventory_valuation'), href: '/reports/inventory-valuation' },
         ]}>
-            <Head title="Inventory Valuation" />
+            <Head title={t('reports.inventory_valuation')} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Inventory Valuation</h1>
-                        <p className="text-muted-foreground">Current inventory value and stock levels</p>
+                        <h1 className="text-2xl font-bold">{t('reports.inventory_valuation')}</h1>
+                        <p className="text-muted-foreground">{t('reports.current_inventory_value')}</p>
                     </div>
                 </div>
 
@@ -85,45 +85,45 @@ export default function InventoryValuationReport({
                 <div className="grid gap-4 md:grid-cols-4">
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.total_value')}</CardTitle>
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-primary">{formatCurrency(total_value)}</div>
-                            <p className="text-xs text-muted-foreground">All inventory</p>
+                            <p className="text-xs text-muted-foreground">{t('reports.all_inventory')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total Items</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.total_items')}</CardTitle>
                             <Package className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{total_items}</div>
-                            <p className="text-xs text-muted-foreground">Products tracked</p>
+                            <p className="text-xs text-muted-foreground">{t('reports.products_tracked')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Low Stock Items</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.low_stock_items')}</CardTitle>
                             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-orange-600">{low_stock_items}</div>
-                            <p className="text-xs text-muted-foreground">Need attention</p>
+                            <p className="text-xs text-muted-foreground">{t('reports.need_attention')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Low Stock Value</CardTitle>
+                            <CardTitle className="text-sm font-medium">{t('reports.low_stock_value')}</CardTitle>
                             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-red-600">{formatCurrency(low_stock_value)}</div>
-                            <p className="text-xs text-muted-foreground">At risk value</p>
+                            <p className="text-xs text-muted-foreground">{t('reports.at_risk_value')}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -131,13 +131,13 @@ export default function InventoryValuationReport({
                 {/* Products List */}
                 <Card className="backdrop-blur-sm bg-background/80 border-sidebar-border/70">
                     <CardHeader>
-                        <CardTitle>Inventory by Value</CardTitle>
+                        <CardTitle>{t('reports.inventory_by_value')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {products.length === 0 ? (
                             <div className="text-center py-6">
                                 <Package className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <h3 className="mt-4 text-lg font-semibold">No inventory data found</h3>
+                                <h3 className="mt-4 text-lg font-semibold">{t('reports.no_inventory_data_found')}</h3>
                             </div>
                         ) : (
                             <div className="space-y-2">
@@ -149,14 +149,14 @@ export default function InventoryValuationReport({
                                                     <div className="flex items-center gap-2">
                                                         <h3 className="font-semibold">{product.name}</h3>
                                                         {product.is_low_stock && (
-                                                            <Badge variant="destructive">Low Stock</Badge>
+                                                            <Badge variant="destructive">{t('reports.low_stock')}</Badge>
                                                         )}
                                                     </div>
                                                     <div className="mt-2 text-sm text-muted-foreground">
-                                                        {product.sku && <p>SKU: {product.sku}</p>}
-                                                        {product.category && <p>Category: {product.category}</p>}
-                                                        <p>Stock: {product.stock_quantity} units</p>
-                                                        <p>Cost: {formatCurrency(product.cost)} per unit</p>
+                                                        {product.sku && <p>{t('products.sku_label')}: {product.sku}</p>}
+                                                        {product.category && <p>{t('reports.category')}: {product.category}</p>}
+                                                        <p>{t('reports.stock')}: {product.stock_quantity} {t('reports.units')}</p>
+                                                        <p>{t('reports.cost')}: {formatCurrency(product.cost)} {t('reports.per_unit')}</p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">

@@ -324,7 +324,7 @@ export default function DiscountsIndex({ discounts, filters }: DiscountsPageProp
                                         min="0"
                                         value={data.minimum_amount || ''}
                                         onChange={(e) => setData('minimum_amount', e.target.value ? parseFloat(e.target.value) : null)}
-                                        placeholder="Optional"
+                                        placeholder={t('common.optional')}
                                     />
                                 </div>
                             </div>
@@ -336,7 +336,7 @@ export default function DiscountsIndex({ discounts, filters }: DiscountsPageProp
                                         min="1"
                                         value={data.max_uses || ''}
                                         onChange={(e) => setData('max_uses', e.target.value ? parseInt(e.target.value) : null)}
-                                        placeholder="Unlimited"
+                                        placeholder={t('discounts.unlimited')}
                                     />
                                 </div>
                                 <div>

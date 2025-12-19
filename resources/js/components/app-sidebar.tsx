@@ -14,6 +14,7 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { useTranslation } from '@/hooks/use-translation';
+import { useMemo } from 'react';
 import { 
     BookOpen, 
     Folder, 
@@ -39,7 +40,9 @@ import {
     ArrowLeftRight,
     Gift,
     DollarSign,
-    History
+    History,
+    Layers,
+    Star
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { LanguageSwitcher } from './language-switcher';
@@ -61,6 +64,11 @@ const getMainNavItems = (t: (key: string) => string): NavItem[] => [
         icon: Package,
     },
     {
+        title: t('nav.bundles'),
+        href: '/bundles',
+        icon: Layers,
+    },
+    {
         title: t('nav.categories'),
         href: '/categories',
         icon: FolderTree,
@@ -69,6 +77,11 @@ const getMainNavItems = (t: (key: string) => string): NavItem[] => [
         title: t('nav.customers'),
         href: '/customers',
         icon: Users,
+    },
+    {
+        title: t('nav.loyalty'),
+        href: '/loyalty',
+        icon: Star,
     },
     {
         title: t('nav.orders'),
@@ -160,8 +173,8 @@ const getMainNavItems = (t: (key: string) => string): NavItem[] => [
  
 
 export function AppSidebar() {
-    const { t } = useTranslation();
-    const mainNavItems = getMainNavItems(t);
+    const { t, currentLanguage } = useTranslation();
+    const mainNavItems = useMemo(() => getMainNavItems(t), [t, currentLanguage]);
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -185,7 +198,9 @@ export function AppSidebar() {
                 <div className="px-2 py-2 border-t border-sidebar-border/70">
                     <LanguageSwitcher variant="sidebar" />
                 </div>
-                <NavUser />
+                <div className="px-2">
+                    <NavUser />
+                </div>
             </SidebarFooter>
         </Sidebar>
     );

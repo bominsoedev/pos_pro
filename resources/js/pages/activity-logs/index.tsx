@@ -103,28 +103,28 @@ export default function ActivityLogsIndex({ logs, filters }: ActivityLogsPagePro
                             </div>
                             <Select value={logNameFilter || 'all'} onValueChange={setLogNameFilter}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Log Name" />
+                                    <SelectValue placeholder={t('common.log_name')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">{t('common.all')}</SelectItem>
-                                    <SelectItem value="products">Products</SelectItem>
-                                    <SelectItem value="orders">Orders</SelectItem>
-                                    <SelectItem value="customers">Customers</SelectItem>
-                                    <SelectItem value="quotations">Quotations</SelectItem>
-                                    <SelectItem value="stock-transfers">Stock Transfers</SelectItem>
-                                    <SelectItem value="gift-cards">Gift Cards</SelectItem>
+                                    <SelectItem value="products">{t('activity_logs.products')}</SelectItem>
+                                    <SelectItem value="orders">{t('activity_logs.orders')}</SelectItem>
+                                    <SelectItem value="customers">{t('activity_logs.customers')}</SelectItem>
+                                    <SelectItem value="quotations">{t('activity_logs.quotations')}</SelectItem>
+                                    <SelectItem value="stock-transfers">{t('activity_logs.stock_transfers')}</SelectItem>
+                                    <SelectItem value="gift-cards">{t('activity_logs.gift_cards')}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Select value={eventFilter || 'all'} onValueChange={setEventFilter}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Event" />
+                                    <SelectValue placeholder={t('common.event')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">{t('common.all')}</SelectItem>
-                                    <SelectItem value="POST">POST</SelectItem>
-                                    <SelectItem value="PUT">PUT</SelectItem>
-                                    <SelectItem value="PATCH">PATCH</SelectItem>
-                                    <SelectItem value="DELETE">DELETE</SelectItem>
+                                    <SelectItem value="POST">{t('activity_logs.post')}</SelectItem>
+                                    <SelectItem value="PUT">{t('activity_logs.put')}</SelectItem>
+                                    <SelectItem value="PATCH">{t('activity_logs.patch')}</SelectItem>
+                                    <SelectItem value="DELETE">{t('activity_logs.delete')}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Input

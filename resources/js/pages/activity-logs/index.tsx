@@ -39,7 +39,7 @@ interface ActivityLogsPageProps {
 }
 
 export default function ActivityLogsIndex({ logs, filters }: ActivityLogsPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
     const [logNameFilter, setLogNameFilter] = useState(filters.log_name || 'all');
     const [eventFilter, setEventFilter] = useState(filters.event || 'all');

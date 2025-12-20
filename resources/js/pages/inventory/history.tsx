@@ -6,6 +6,7 @@ import { ArrowLeft, Package, TrendingUp, TrendingDown, Minus } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import Pagination from '@/components/pagination';
 import { type BreadcrumbItem } from '@/types';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface InventoryLog {
     id: number;
@@ -34,7 +35,7 @@ interface InventoryHistoryProps {
 }
 
 export default function InventoryHistory({ product, logs }: InventoryHistoryProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const getTypeIcon = (type: string, change: number) => {
         if (type === 'sale') {
             return <TrendingDown className="h-4 w-4 text-destructive" />;
@@ -56,7 +57,7 @@ export default function InventoryHistory({ product, logs }: InventoryHistoryProp
     };
 
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleString('en-US', {
+        return new Date(date).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric',

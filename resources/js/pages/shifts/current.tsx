@@ -34,7 +34,7 @@ interface CurrentShiftProps {
 }
 
 export default function CurrentShift({ shift }: CurrentShiftProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showCloseDialog, setShowCloseDialog] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
@@ -81,7 +81,7 @@ export default function CurrentShift({ shift }: CurrentShiftProps) {
                             <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl font-bold">{formatCurrency(shift.total_sales)}</div>
+                            <div className="text-xl font-bold">{formatCurrency(shift.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
 
@@ -101,7 +101,7 @@ export default function CurrentShift({ shift }: CurrentShiftProps) {
                             <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl font-bold">{formatCurrency(shift.expected_cash || shift.opening_cash)}</div>
+                            <div className="text-xl font-bold">{formatCurrency(shift.expected_cash || shift.opening_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
                 </div>
@@ -121,16 +121,16 @@ export default function CurrentShift({ shift }: CurrentShiftProps) {
                         </div>
                         <div className="flex justify-between">
                             <span className="text-muted-foreground">{t('shifts.opened_at')}:</span>
-                            <span className="font-medium">{new Date(shift.opened_at).toLocaleString()}</span>
+                            <span className="font-medium">{new Date(shift.opened_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-muted-foreground">{t('shifts.opening_cash')}:</span>
-                            <span className="font-medium">{formatCurrency(shift.opening_cash)}</span>
+                            <span className="font-medium">{formatCurrency(shift.opening_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                         </div>
                         {shift.expected_cash !== null && (
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('shifts.expected_cash')}:</span>
-                                <span className="font-medium">{formatCurrency(shift.expected_cash)}</span>
+                                <span className="font-medium">{formatCurrency(shift.expected_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                         )}
                     </CardContent>

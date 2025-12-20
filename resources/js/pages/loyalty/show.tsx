@@ -45,7 +45,7 @@ interface LoyaltyShowProps {
 }
 
 export default function LoyaltyShow({ customer, transactions }: LoyaltyShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showAdjustDialog, setShowAdjustDialog] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({

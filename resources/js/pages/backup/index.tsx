@@ -21,7 +21,7 @@ interface BackupPageProps {
 }
 
 export default function BackupIndex({ backups }: BackupPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showRestoreDialog, setShowRestoreDialog] = useState(false);
     const { data, setData, post, processing } = useForm({
         backup_file: null as File | null,
@@ -181,7 +181,7 @@ export default function BackupIndex({ backups }: BackupPageProps) {
                                             <tr key={backup.filename} className="border-b hover:bg-muted/50">
                                                 <td className="p-2 font-mono text-sm">{backup.filename}</td>
                                                 <td className="p-2">{formatFileSize(backup.size)}</td>
-                                                <td className="p-2">{new Date(backup.created_at).toLocaleString()}</td>
+                                                <td className="p-2">{new Date(backup.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 <td className="p-2 text-right">
                                                     <div className="flex justify-end gap-2">
                                                         <Button

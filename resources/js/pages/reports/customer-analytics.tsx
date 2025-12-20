@@ -34,7 +34,7 @@ export default function CustomerAnalyticsReport({
     date_to,
     customers,
 }: CustomerAnalyticsProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [dateFrom, setDateFrom] = useState(date_from);
     const [dateTo, setDateTo] = useState(date_to);
 
@@ -170,11 +170,11 @@ export default function CustomerAnalyticsReport({
                                                     </div>
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">{t('reports.period_sales')}</p>
-                                                        <p className="font-semibold">{formatCurrency(customer.total_spent)}</p>
+                                                        <p className="font-semibold">{formatCurrency(customer.total_spent, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                     </div>
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">{t('reports.lifetime_value')}</p>
-                                                        <p className="font-semibold text-lg text-primary">{formatCurrency(customer.lifetime_value)}</p>
+                                                        <p className="font-semibold text-lg text-primary">{formatCurrency(customer.lifetime_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                     </div>
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">{t('customers.loyalty_points')}</p>
@@ -209,13 +209,13 @@ export default function CustomerAnalyticsReport({
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('reports.period_sales')}</p>
                                     <p className="text-2xl font-bold text-primary">
-                                        {formatCurrency(customers.reduce((sum, c) => sum + c.total_spent, 0))}
+                                        {formatCurrency(customers.reduce((sum, c) => sum + c.total_spent, 0), currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                     </p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('reports.total_lifetime_value')}</p>
                                     <p className="text-2xl font-bold text-green-600">
-                                        {formatCurrency(customers.reduce((sum, c) => sum + c.lifetime_value, 0))}
+                                        {formatCurrency(customers.reduce((sum, c) => sum + c.lifetime_value, 0), currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                     </p>
                                 </div>
                             </div>

@@ -58,7 +58,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ stats, recentOrders, topProducts, lowStockProducts, salesChartData, monthlyTrend }: DashboardProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const salesGrowth = useMemo(() => 
         stats.last_month.sales > 0
@@ -79,7 +79,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.today.sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.today.sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {stats.today.orders} {t('reports.total_orders')}
                             </p>
@@ -92,7 +92,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.this_month.sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.this_month.sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {salesGrowth >= 0 ? '+' : ''}{salesGrowth.toFixed(1)}% {t('dashboard.from_last_month')}
                             </p>
@@ -155,7 +155,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                                     <XAxis dataKey="date" />
                                     <YAxis />
                                     <Tooltip 
-                                        formatter={(value: number) => formatCurrency(value)}
+                                        formatter={(value: number) => formatCurrency(value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                     />
                                     <Legend />
                                     <Line 
@@ -188,7 +188,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                                     <XAxis dataKey="month" />
                                     <YAxis />
                                     <Tooltip 
-                                        formatter={(value: number) => formatCurrency(value)}
+                                        formatter={(value: number) => formatCurrency(value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                     />
                                     <Legend />
                                     <Bar dataKey="sales" fill="#8884d8" name={t('dashboard.sales')} />
@@ -217,7 +217,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-medium">{formatCurrency(order.total)}</p>
+                                                <p className="font-medium">{formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                 <Badge variant={order.status === 'completed' ? 'default' : 'secondary'}>
                                                     {order.status}
                                                 </Badge>
@@ -247,7 +247,7 @@ export default function Dashboard({ stats, recentOrders, topProducts, lowStockPr
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-medium">{formatCurrency(product.price)}</p>
+                                                <p className="font-medium">{formatCurrency(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             </div>
                                         </div>
                                     ))

@@ -49,7 +49,7 @@ interface DailyReportProps {
 }
 
 export default function DailyReport({ date, stats, orders, topProducts }: DailyReportProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const handleDateChange = (newDate: string) => {
         router.get('/reports/daily', { date: newDate }, {
@@ -138,7 +138,7 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.total_sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {stats.total_orders} {t('reports.orders')}
                             </p>
@@ -164,7 +164,7 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                             <Banknote className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.cash_sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.cash_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {((stats.cash_sales / stats.total_sales) * 100 || 0).toFixed(1)}% {t('reports.of_total')}
                             </p>
@@ -177,7 +177,7 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                             <CreditCard className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.card_sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.card_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {((stats.card_sales / stats.total_sales) * 100 || 0).toFixed(1)}% {t('reports.of_total')}
                             </p>
@@ -203,7 +203,7 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-medium">{formatCurrency(product.total_revenue)}</p>
+                                                <p className="font-medium">{formatCurrency(product.total_revenue, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             </div>
                                         </div>
                                     ))
@@ -233,9 +233,12 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-medium">{formatCurrency(order.total)}</p>
+                                                <p className="font-medium">{formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                 <p className="text-xs text-muted-foreground">
-                                                    {new Date(order.created_at).toLocaleTimeString()}
+                                                    {new Date(order.created_at).toLocaleTimeString(currentLanguage === 'my' ? 'my-MM' : 'en-US', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })}
                                                 </p>
                                             </div>
                                         </div>
@@ -261,7 +264,7 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                                     <span>{t('pos.payment_method_cash')}</span>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-bold">{formatCurrency(stats.cash_sales)}</p>
+                                    <p className="font-bold">{formatCurrency(stats.cash_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                     <p className="text-xs text-muted-foreground">
                                         {((stats.cash_sales / stats.total_sales) * 100 || 0).toFixed(1)}%
                                     </p>
@@ -273,7 +276,7 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                                     <span>{t('pos.payment_method_card')}</span>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-bold">{formatCurrency(stats.card_sales)}</p>
+                                    <p className="font-bold">{formatCurrency(stats.card_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                     <p className="text-xs text-muted-foreground">
                                         {((stats.card_sales / stats.total_sales) * 100 || 0).toFixed(1)}%
                                     </p>
@@ -286,7 +289,7 @@ export default function DailyReport({ date, stats, orders, topProducts }: DailyR
                                         <span>{t('reports.other_methods')}</span>
                                     </div>
                                     <div className="text-right">
-                                        <p className="font-bold">{formatCurrency(stats.other_sales)}</p>
+                                        <p className="font-bold">{formatCurrency(stats.other_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                         <p className="text-xs text-muted-foreground">
                                             {((stats.other_sales / stats.total_sales) * 100 || 0).toFixed(1)}%
                                         </p>

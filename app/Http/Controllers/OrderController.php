@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Setting;
 use App\Notifications\OrderConfirmation;
 use App\Notifications\NewOrderNotification;
+use App\Services\AccountingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -197,6 +198,14 @@ class OrderController extends Controller
             }
 
             DB::commit();
+
+            // Create accounting journal entry for the sale
+            try {
+                $accountingService = new AccountingService();
+                $accountingService->createSaleEntry($order);
+            } catch (\Exception $e) {
+                \Log::error('Failed to create accounting entry for order: ' . $e->getMessage());
+            }
 
             // Send email notifications
             $order->load(['customer', 'user', 'items.product', 'payments']);

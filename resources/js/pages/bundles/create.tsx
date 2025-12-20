@@ -30,7 +30,7 @@ interface BundlesCreateProps {
 }
 
 export default function BundlesCreate({ products }: BundlesCreateProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [selectedItems, setSelectedItems] = useState<BundleItem[]>([]);
     const [selectedProductId, setSelectedProductId] = useState<string>('');
 
@@ -198,7 +198,7 @@ export default function BundlesCreate({ products }: BundlesCreateProps) {
                                     <SelectContent>
                                         {products.map((product) => (
                                             <SelectItem key={product.id} value={product.id.toString()}>
-                                                {product.name} {product.sku && `(${product.sku})`} - {formatCurrency(product.price)}
+                                                {product.name} {product.sku && `(${product.sku})`} - {formatCurrency(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -219,7 +219,7 @@ export default function BundlesCreate({ products }: BundlesCreateProps) {
                                                 <div className="flex-1">
                                                     <div className="font-medium">{product.name}</div>
                                                     <div className="text-sm text-muted-foreground">
-                                                        {formatCurrency(product.price)} x {item.quantity} = {formatCurrency(product.price * item.quantity)}
+                                                        {formatCurrency(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')} x {item.quantity} = {formatCurrency(product.price * item.quantity, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
@@ -245,11 +245,11 @@ export default function BundlesCreate({ products }: BundlesCreateProps) {
                                     <div className="pt-2 border-t">
                                         <div className="flex justify-between font-medium">
                                             <span>{t('bundles.total_individual_price')}:</span>
-                                            <span>{formatCurrency(calculateTotalPrice())}</span>
+                                            <span>{formatCurrency(calculateTotalPrice(), currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                         </div>
                                         <div className="flex justify-between text-green-600">
                                             <span>{t('bundles.savings')}:</span>
-                                            <span>{formatCurrency(calculateTotalPrice() - data.bundle_price)}</span>
+                                            <span>{formatCurrency(calculateTotalPrice() - data.bundle_price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                         </div>
                                     </div>
                                 </div>

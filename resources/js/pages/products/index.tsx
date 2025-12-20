@@ -57,7 +57,7 @@ interface ProductsPageProps {
 }
 
 export default function ProductsIndex({ products, categories, filters }: ProductsPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showDialog, setShowDialog] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
@@ -508,7 +508,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">{t('products.price_label')}:</span>
-                                        <span className="font-bold">{formatPrice(product.price)}</span>
+                                        <span className="font-bold">{formatPrice(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                     {product.track_inventory && (
                                         <div className="flex justify-between">
@@ -689,7 +689,7 @@ export default function ProductsIndex({ products, categories, filters }: Product
                                                     <div className={`relative w-full h-32 border-2 rounded-md overflow-hidden ${img.is_primary ? 'border-primary' : 'border-border'}`}>
                                                         <img
                                                             src={img.image_url}
-                                                            alt={`Product image ${index + 1}`}
+                                                            alt={t('products.image_alt', { number: index + 1 })}
                                                             className="w-full h-full object-cover"
                                                         />
                                                         {img.is_primary && (

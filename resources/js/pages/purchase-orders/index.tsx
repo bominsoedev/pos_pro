@@ -40,7 +40,7 @@ interface PurchaseOrdersPageProps {
 }
 
 export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, filters }: PurchaseOrdersPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
     const debouncedSearch = useDebounce(searchInput, 500);
 
@@ -206,13 +206,13 @@ export default function PurchaseOrdersIndex({ purchaseOrders, suppliers, filters
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="h-4 w-4" />
-                                                {new Date(po.order_date).toLocaleDateString()}
+                                                {new Date(po.order_date).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                 {po.expected_delivery_date && (
-                                                    <> - {new Date(po.expected_delivery_date).toLocaleDateString()}</>
+                                                    <> - {new Date(po.expected_delivery_date).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</>
                                                 )}
                                             </div>
                                             <div className="font-semibold text-primary">
-                                                {formatCurrency(po.total)}
+                                                {formatCurrency(po.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                             </div>
                                         </div>
                                     </div>

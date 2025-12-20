@@ -47,7 +47,7 @@ interface QuotationShowProps {
 }
 
 export default function QuotationShow({ quotation }: QuotationShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const { post, processing } = useForm({});
 
     const getStatusBadge = (status: string) => {
@@ -155,12 +155,12 @@ export default function QuotationShow({ quotation }: QuotationShowProps) {
                                                     <p className="text-sm text-muted-foreground">{item.product_sku}</p>
                                                 )}
                                                 <p className="text-sm text-muted-foreground">
-                                                    {item.quantity} x {formatCurrency(item.price)}
-                                                    {item.discount > 0 && ` - ${formatCurrency(item.discount)} discount`}
+                                                    {item.quantity} x {formatCurrency(item.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
+                                                    {item.discount > 0 && ` - ${formatCurrency(item.discount, currentLanguage === 'my' ? 'my-MM' : 'en-US')} discount`}
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-semibold">{formatCurrency(item.total)}</p>
+                                                <p className="font-semibold">{formatCurrency(item.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -193,24 +193,24 @@ export default function QuotationShow({ quotation }: QuotationShowProps) {
                         <CardContent className="space-y-2">
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('pos.subtotal')}</span>
-                                <span>{formatCurrency(quotation.subtotal)}</span>
+                                <span>{formatCurrency(quotation.subtotal, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             {quotation.tax_amount > 0 && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('pos.tax')}</span>
-                                    <span>{formatCurrency(quotation.tax_amount)}</span>
+                                    <span>{formatCurrency(quotation.tax_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                             {quotation.discount_amount > 0 && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('pos.discount')}</span>
-                                    <span className="text-destructive">-{formatCurrency(quotation.discount_amount)}</span>
+                                    <span className="text-destructive">-{formatCurrency(quotation.discount_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                             <div className="border-t pt-2 mt-2">
                                 <div className="flex justify-between font-bold text-lg">
                                     <span>{t('pos.total')}</span>
-                                    <span>{formatCurrency(quotation.total)}</span>
+                                    <span>{formatCurrency(quotation.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             </div>
                         </CardContent>
@@ -226,12 +226,12 @@ export default function QuotationShow({ quotation }: QuotationShowProps) {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
                                 <p className="text-muted-foreground">{t('common.date')}</p>
-                                <p className="font-medium">{new Date(quotation.created_at).toLocaleDateString()}</p>
+                                <p className="font-medium">{new Date(quotation.created_at).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                             </div>
                             {quotation.valid_until && (
                                 <div>
                                     <p className="text-muted-foreground">{t('quotations.valid_until')}</p>
-                                    <p className="font-medium">{new Date(quotation.valid_until).toLocaleDateString()}</p>
+                                    <p className="font-medium">{new Date(quotation.valid_until).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                 </div>
                             )}
                             {quotation.way && (

@@ -42,7 +42,7 @@ interface RefundsPageProps {
 }
 
 export default function RefundsIndex({ refunds, filters }: RefundsPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     // Keyboard shortcuts
@@ -173,7 +173,7 @@ export default function RefundsIndex({ refunds, filters }: RefundsPageProps) {
                                                     )}
                                                 </td>
                                                 <td className="p-2">{getTypeLabel(refund.type)}</td>
-                                                <td className="p-2">{formatCurrency(refund.amount)}</td>
+                                                <td className="p-2">{formatCurrency(refund.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 <td className="p-2">
                                                     <Badge variant={getStatusBadge(refund.status)}>
                                                         {t(`refunds.${refund.status}`)}

@@ -38,7 +38,7 @@ interface QuotationsPageProps {
 }
 
 export default function QuotationsIndex({ quotations, filters }: QuotationsPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const debouncedSearch = useDebounce(searchInput, 500);
@@ -135,15 +135,15 @@ export default function QuotationsIndex({ quotations, filters }: QuotationsPageP
                                                     </div>
                                                     <div className="mt-2 text-sm text-muted-foreground">
                                                         <p>{t('quotations.customer')}: {quotation.customer?.name || t('notifications.walk_in_customer')}</p>
-                                                        <p>{t('common.date')}: {new Date(quotation.created_at).toLocaleDateString()}</p>
+                                                        <p>{t('common.date')}: {new Date(quotation.created_at).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                         {quotation.valid_until && (
-                                                            <p>{t('quotations.valid_until')}: {new Date(quotation.valid_until).toLocaleDateString()}</p>
+                                                            <p>{t('quotations.valid_until')}: {new Date(quotation.valid_until).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                         )}
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className="text-right">
-                                                        <p className="text-lg font-bold">{formatCurrency(quotation.total)}</p>
+                                                        <p className="text-lg font-bold">{formatCurrency(quotation.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                     </div>
                                                     <Link href={`/quotations/${quotation.id}`}>
                                                         <Button variant="ghost" size="icon">

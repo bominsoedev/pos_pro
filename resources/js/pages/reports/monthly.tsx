@@ -46,8 +46,8 @@ interface MonthlyReportProps {
 }
 
 export default function MonthlyReport({ year, month, stats, dailyStats, topProducts }: MonthlyReportProps) {
-    const { t } = useTranslation();
-    const monthName = new Date(year, month - 1).toLocaleString('en-US', { month: 'long' });
+    const { t, currentLanguage } = useTranslation();
+    const monthName = new Date(year, month - 1).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US', { month: 'long' });
 
     const handleDateChange = (newYear: number, newMonth: number) => {
         router.get('/reports/monthly', { year: newYear, month: newMonth }, {
@@ -101,7 +101,7 @@ export default function MonthlyReport({ year, month, stats, dailyStats, topProdu
                             <SelectContent>
                                 {months.map((m) => (
                                     <SelectItem key={m} value={m.toString()}>
-                                        {new Date(year, m - 1).toLocaleString('en-US', { month: 'long' })}
+                                        {new Date(year, m - 1).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US', { month: 'long' })}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -161,7 +161,7 @@ export default function MonthlyReport({ year, month, stats, dailyStats, topProdu
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.total_sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {stats.total_orders} {t('reports.orders')}
                             </p>
@@ -187,7 +187,7 @@ export default function MonthlyReport({ year, month, stats, dailyStats, topProdu
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.average_order_value)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.average_order_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {t('reports.per_order')}
                             </p>
@@ -200,7 +200,7 @@ export default function MonthlyReport({ year, month, stats, dailyStats, topProdu
                             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.cash_sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.cash_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {((stats.cash_sales / stats.total_sales) * 100 || 0).toFixed(1)}% {t('reports.of_total')}
                             </p>
@@ -220,14 +220,14 @@ export default function MonthlyReport({ year, month, stats, dailyStats, topProdu
                                     <div key={day.date} className="flex items-center justify-between border-b pb-2">
                                         <div>
                                             <p className="font-medium">
-                                                {new Date(day.date).toLocaleDateString('en-US', { 
+                                                {new Date(day.date).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US', { 
                                                     month: 'short', 
                                                     day: 'numeric' 
                                                 })}
                                             </p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-bold">{formatCurrency(day.sales)}</p>
+                                            <p className="font-bold">{formatCurrency(day.sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             <p className="text-xs text-muted-foreground">{day.orders} {t('reports.orders')}</p>
                                         </div>
                                     </div>
@@ -253,7 +253,7 @@ export default function MonthlyReport({ year, month, stats, dailyStats, topProdu
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-medium">{formatCurrency(product.total_revenue)}</p>
+                                                <p className="font-medium">{formatCurrency(product.total_revenue, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             </div>
                                         </div>
                                     ))

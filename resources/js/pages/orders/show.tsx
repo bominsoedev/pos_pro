@@ -76,7 +76,7 @@ interface OrderShowProps {
 }
 
 export default function OrderShow({ order }: OrderShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showRefundDialog, setShowRefundDialog] = useState(false);
     const [refundType, setRefundType] = useState<'full' | 'partial'>('full');
     const [selectedItems, setSelectedItems] = useState<Record<number, { quantity: number; amount: number; reason: string }>>({});
@@ -189,7 +189,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                         <div>
                             <h1 className="text-2xl font-bold">{t('orders.title')} {order.order_number}</h1>
                             <p className="text-muted-foreground">
-                                {new Date(order.created_at).toLocaleString()}
+                                {new Date(order.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                             </p>
                         </div>
                     </div>
@@ -272,10 +272,10 @@ export default function OrderShow({ order }: OrderShowProps) {
                                     <div>
                                         <p className="font-medium capitalize">{payment.method}</p>
                                         <p className="text-xs text-muted-foreground">
-                                            {new Date(payment.created_at).toLocaleString()}
+                                            {new Date(payment.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </p>
                                     </div>
-                                    <p className="font-bold">{formatCurrency(payment.amount)}</p>
+                                    <p className="font-bold">{formatCurrency(payment.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                 </div>
                             ))}
                         </CardContent>
@@ -303,24 +303,24 @@ export default function OrderShow({ order }: OrderShowProps) {
                                     {order.items.map((item) => (
                                         <tr key={item.id} className="border-b">
                                             <td className="p-2">{item.product_name}</td>
-                                            <td className="p-2 text-right">{formatCurrency(item.price)}</td>
+                                            <td className="p-2 text-right">{formatCurrency(item.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                             <td className="p-2 text-right">{item.quantity}</td>
                                             <td className="p-2 text-right text-destructive">
-                                                {item.discount > 0 ? `-${formatCurrency(item.discount)}` : '-'}
+                                                {item.discount > 0 ? `-${formatCurrency(item.discount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}` : '-'}
                                             </td>
-                                            <td className="p-2 text-right font-bold">{formatCurrency(item.total)}</td>
+                                            <td className="p-2 text-right font-bold">{formatCurrency(item.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                                 <tfoot>
                                     <tr className="border-t">
                                         <td colSpan={4} className="p-2 text-right font-medium">{t('pos.subtotal')}:</td>
-                                        <td className="p-2 text-right">{formatCurrency(order.subtotal)}</td>
+                                        <td className="p-2 text-right">{formatCurrency(order.subtotal, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                     </tr>
                                     {order.tax_amount > 0 && (
                                         <tr>
                                             <td colSpan={4} className="p-2 text-right font-medium">{t('pos.tax')}:</td>
-                                            <td className="p-2 text-right">{formatCurrency(order.tax_amount)}</td>
+                                            <td className="p-2 text-right">{formatCurrency(order.tax_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                         </tr>
                                     )}
                                     {order.discount_amount > 0 && (
@@ -329,14 +329,14 @@ export default function OrderShow({ order }: OrderShowProps) {
                                                 {t('pos.discount')}:
                                             </td>
                                             <td className="p-2 text-right text-destructive">
-                                                -{formatCurrency(order.discount_amount)}
+                                                -{formatCurrency(order.discount_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                             </td>
                                         </tr>
                                     )}
                                     <tr className="border-t-2">
                                         <td colSpan={4} className="p-2 text-right font-bold text-lg">{t('pos.total')}:</td>
                                         <td className="p-2 text-right font-bold text-lg">
-                                            {formatCurrency(order.total)}
+                                            {formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -359,12 +359,12 @@ export default function OrderShow({ order }: OrderShowProps) {
                                             <div>
                                                 <p className="font-medium">{refund.refund_number}</p>
                                                 <p className="text-xs text-muted-foreground">
-                                                    {new Date(refund.created_at).toLocaleString()}
+                                                    {new Date(refund.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                 </p>
                                             </div>
                                             <div className="text-right">
                                                 <p className="font-bold text-destructive">
-                                                    -{formatCurrency(refund.amount)}
+                                                    -{formatCurrency(refund.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                 </p>
                                                 <Badge variant={refund.status === 'completed' ? 'default' : 'secondary'}>
                                                     {refund.status}
@@ -379,7 +379,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                                 <p className="font-medium mb-1">{t('orders.refunded_items')}:</p>
                                                 {refund.items.map((item, idx) => (
                                                     <p key={idx} className="text-muted-foreground">
-                                                        • {item.quantity} item(s) - {formatCurrency(item.amount)}
+                                                        • {item.quantity} item(s) - {formatCurrency(item.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                     </p>
                                                 ))}
                                             </div>
@@ -390,13 +390,13 @@ export default function OrderShow({ order }: OrderShowProps) {
                                     <div className="flex justify-between">
                                         <span className="font-medium">{t('orders.total_refunded')}:</span>
                                         <span className="font-bold text-destructive">
-                                            -{formatCurrency(totalRefunded)}
+                                            -{formatCurrency(totalRefunded, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between mt-1">
                                         <span className="text-sm text-muted-foreground">{t('orders.remaining')}:</span>
                                         <span className="text-sm font-medium">
-                                            {formatCurrency(remainingAmount)}
+                                            {formatCurrency(remainingAmount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </span>
                                     </div>
                                 </div>
@@ -412,9 +412,9 @@ export default function OrderShow({ order }: OrderShowProps) {
                     <DialogHeader>
                         <DialogTitle>{t('orders.process_refund')}</DialogTitle>
                         <DialogDescription>
-                            {t('orders.total')}: {formatCurrency(order.total)} | 
-                            {t('orders.already_refunded')}: {formatCurrency(totalRefunded)} | 
-                            {t('orders.remaining')}: {formatCurrency(remainingAmount)}
+                            {t('orders.total')}: {formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')} | 
+                            {t('orders.already_refunded')}: {formatCurrency(totalRefunded, currentLanguage === 'my' ? 'my-MM' : 'en-US')} | 
+                            {t('orders.remaining')}: {formatCurrency(remainingAmount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4">
@@ -428,7 +428,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="full">{t('orders.full_refund')} ({formatCurrency(remainingAmount)})</SelectItem>
+                                    <SelectItem value="full">{t('orders.full_refund')} ({formatCurrency(remainingAmount, currentLanguage === 'my' ? 'my-MM' : 'en-US')})</SelectItem>
                                     <SelectItem value="partial">{t('orders.partial_refund')}</SelectItem>
                                 </SelectContent>
                             </Select>
@@ -449,7 +449,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                                     <div className="flex-1">
                                                         <p className="font-medium">{item.product_name}</p>
                                                         <p className="text-xs text-muted-foreground">
-                                                            {t('orders.available')}: {item.quantity} × {formatCurrency(itemPrice)}
+                                                            {t('orders.available')}: {item.quantity} × {formatCurrency(itemPrice, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                         </p>
                                                     </div>
                                                     <input
@@ -508,7 +508,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                     <div className="flex justify-between">
                                         <span className="text-sm font-medium">{t('orders.selected_refund_amount')}:</span>
                                         <span className="text-sm font-bold">
-                                            {formatCurrency(Object.values(selectedItems).reduce((sum, item) => sum + item.amount, 0))}
+                                            {formatCurrency(Object.values(selectedItems).reduce((sum, item) => sum + item.amount, 0), currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </span>
                                     </div>
                                 </div>

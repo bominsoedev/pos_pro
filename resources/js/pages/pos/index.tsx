@@ -69,7 +69,7 @@ interface PosProps {
 }
 
 export default function Pos({ products, categories, customers, taxRate = 0, filters }: PosProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const breadcrumbs = getBreadcrumbs(t);
     
     const [carts, setCarts] = useState<Cart[]>([{
@@ -555,7 +555,7 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                                                 />
                                             )}
                                             <h3 className="font-medium text-sm mb-1 line-clamp-2">{product.name}</h3>
-                                            <p className="text-lg font-bold text-primary">{formatPrice(product.price)}</p>
+                                            <p className="text-lg font-bold text-primary">{formatPrice(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             {product.track_inventory && (
                                                     <Badge variant={(Number(product.stock_quantity) || 0) <= (Number(product.low_stock_threshold) || 0) ? 'destructive' : 'secondary'} className="mt-1">
                                                     {t('pos.stock')}: {product.stock_quantity}
@@ -645,7 +645,7 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                                                     <div className="flex-1">
                                                         <p className="font-medium text-sm">{item.product_name}</p>
                                                         <p className="text-xs text-muted-foreground">
-                                                            {formatPrice(item.price)} × {item.quantity}
+                                                            {formatPrice(item.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')} × {item.quantity}
                                                         </p>
                                                     </div>
                                                     <button
@@ -675,7 +675,7 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                                                             <Plus className="h-3 w-3" />
                                                         </Button>
                                                     </div>
-                                                    <p className="font-bold">{formatPrice(item.total)}</p>
+                                                    <p className="font-bold">{formatPrice(item.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -716,23 +716,23 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                                     
                                     <div className="flex justify-between text-sm">
                                         <span>{t('pos.subtotal')}:</span>
-                                        <span>{formatPrice(subtotal)}</span>
+                                        <span>{formatPrice(subtotal, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                     {tax > 0 && (
                                         <div className="flex justify-between text-sm">
                                             <span>{t('pos.tax')}:</span>
-                                            <span>{formatPrice(tax)}</span>
+                                            <span>{formatPrice(tax, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                         </div>
                                     )}
                                     {discountAmount > 0 && (
                                         <div className="flex justify-between text-sm text-destructive">
                                             <span>{t('pos.discount')} {discountCode && `(${discountCode})`}:</span>
-                                            <span>-{formatPrice(discountAmount)}</span>
+                                            <span>-{formatPrice(discountAmount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                         </div>
                                     )}
                                     <div className="flex justify-between text-lg font-bold pt-2 border-t">
                                         <span>{t('pos.total')}:</span>
-                                        <span>{formatPrice(total)}</span>
+                                        <span>{formatPrice(total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                     
                                     {/* Keyboard Shortcuts Hint */}
@@ -809,7 +809,7 @@ export default function Pos({ products, categories, customers, taxRate = 0, filt
                             <div className="p-4 rounded-lg border bg-muted/50">
                                 <div className="flex justify-between text-lg font-bold">
                                     <span>{t('pos.total')}:</span>
-                                    <span>{formatPrice(total)}</span>
+                                    <span>{formatPrice(total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             </div>
                         </div>

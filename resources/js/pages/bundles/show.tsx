@@ -40,7 +40,7 @@ interface BundlesShowProps {
 }
 
 export default function BundlesShow({ bundle }: BundlesShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const calculateTotalIndividualPrice = () => {
         return bundle.items.reduce((total, item) => {
@@ -111,12 +111,12 @@ export default function BundlesShow({ bundle }: BundlesShowProps) {
                             )}
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('bundles.bundle_price')}:</span>
-                                <span className="font-medium text-lg">{formatCurrency(bundle.bundle_price)}</span>
+                                <span className="font-medium text-lg">{formatCurrency(bundle.bundle_price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             {bundle.savings > 0 && (
                                 <div className="flex justify-between text-green-600">
                                     <span>{t('bundles.savings')}:</span>
-                                    <span className="font-medium">{formatCurrency(bundle.savings)}</span>
+                                    <span className="font-medium">{formatCurrency(bundle.savings, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                         </CardContent>
@@ -130,16 +130,16 @@ export default function BundlesShow({ bundle }: BundlesShowProps) {
                         <CardContent className="space-y-2">
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('bundles.total_individual_price')}:</span>
-                                <span className="font-medium">{formatCurrency(calculateTotalIndividualPrice())}</span>
+                                <span className="font-medium">{formatCurrency(calculateTotalIndividualPrice(), currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('bundles.bundle_price')}:</span>
-                                <span className="font-medium">{formatCurrency(bundle.bundle_price)}</span>
+                                <span className="font-medium">{formatCurrency(bundle.bundle_price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             <div className="pt-2 border-t">
                                 <div className="flex justify-between text-green-600 font-medium">
                                     <span>{t('bundles.savings')}:</span>
-                                    <span>{formatCurrency(bundle.savings)}</span>
+                                    <span>{formatCurrency(bundle.savings, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             </div>
                         </CardContent>
@@ -168,16 +168,16 @@ export default function BundlesShow({ bundle }: BundlesShowProps) {
                                         <tr key={item.id} className="border-b hover:bg-muted/50">
                                             <td className="p-2">{item.product.name}</td>
                                             <td className="p-2">{item.product.sku || '-'}</td>
-                                            <td className="p-2">{formatCurrency(item.product.price)}</td>
+                                            <td className="p-2">{formatCurrency(item.product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                             <td className="p-2">{item.quantity}</td>
-                                            <td className="p-2">{formatCurrency(item.product.price * item.quantity)}</td>
+                                            <td className="p-2">{formatCurrency(item.product.price * item.quantity, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                                 <tfoot>
                                     <tr className="border-t font-medium">
                                         <td colSpan={4} className="p-2 text-right">{t('bundles.total')}:</td>
-                                        <td className="p-2">{formatCurrency(calculateTotalIndividualPrice())}</td>
+                                        <td className="p-2">{formatCurrency(calculateTotalIndividualPrice(), currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                     </tr>
                                 </tfoot>
                             </table>

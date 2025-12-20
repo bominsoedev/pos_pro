@@ -46,7 +46,7 @@ interface ShiftShowProps {
 }
 
 export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const getStatusBadge = (status: string) => {
         const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -99,7 +99,7 @@ export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShow
                             <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl font-bold">{formatCurrency(shift.total_sales)}</div>
+                            <div className="text-xl font-bold">{formatCurrency(shift.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
 
@@ -119,7 +119,7 @@ export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShow
                             <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl font-bold">{formatCurrency(shift.opening_cash)}</div>
+                            <div className="text-xl font-bold">{formatCurrency(shift.opening_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
 
@@ -135,7 +135,7 @@ export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShow
                             </CardHeader>
                             <CardContent>
                                 <div className={`text-xl font-bold ${shift.cash_difference && shift.cash_difference !== 0 ? 'text-destructive' : 'text-green-500'}`}>
-                                    {shift.cash_difference ? formatCurrency(shift.cash_difference) : formatCurrency(0)}
+                                    {shift.cash_difference ? formatCurrency(shift.cash_difference, currentLanguage === 'my' ? 'my-MM' : 'en-US') : formatCurrency(0, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                 </div>
                             </CardContent>
                         </Card>
@@ -159,28 +159,28 @@ export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShow
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('shifts.opened_at')}:</span>
-                                <span className="font-medium">{new Date(shift.opened_at).toLocaleString()}</span>
+                                <span className="font-medium">{new Date(shift.opened_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             {shift.closed_at && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('shifts.closed_at')}:</span>
-                                    <span className="font-medium">{new Date(shift.closed_at).toLocaleString()}</span>
+                                    <span className="font-medium">{new Date(shift.closed_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('shifts.opening_cash')}:</span>
-                                <span className="font-medium">{formatCurrency(shift.opening_cash)}</span>
+                                <span className="font-medium">{formatCurrency(shift.opening_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             {shift.closing_cash !== null && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('shifts.closing_cash')}:</span>
-                                    <span className="font-medium">{formatCurrency(shift.closing_cash)}</span>
+                                    <span className="font-medium">{formatCurrency(shift.closing_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                             {shift.expected_cash !== null && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('shifts.expected_cash')}:</span>
-                                    <span className="font-medium">{formatCurrency(shift.expected_cash)}</span>
+                                    <span className="font-medium">{formatCurrency(shift.expected_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                         </CardContent>
@@ -196,7 +196,7 @@ export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShow
                                 paymentBreakdown.map((payment) => (
                                     <div key={payment.method} className="flex justify-between">
                                         <span className="text-muted-foreground">{getPaymentMethodLabel(payment.method)}:</span>
-                                        <span className="font-medium">{formatCurrency(payment.total)}</span>
+                                        <span className="font-medium">{formatCurrency(payment.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                 ))
                             ) : (
@@ -234,7 +234,7 @@ export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShow
                                             <tr key={order.id} className="border-b hover:bg-muted/50">
                                                 <td className="p-2">{order.order_number}</td>
                                                 <td className="p-2">{order.customer?.name || t('pos.walk_in_customer')}</td>
-                                                <td className="p-2">{formatCurrency(order.total)}</td>
+                                                <td className="p-2">{formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 <td className="p-2">
                                                     {order.payments.length > 0 ? (
                                                         order.payments.map((p, idx) => (
@@ -247,7 +247,7 @@ export default function ShiftShow({ shift, orders, paymentBreakdown }: ShiftShow
                                                         '-'
                                                     )}
                                                 </td>
-                                                <td className="p-2">{new Date(order.created_at).toLocaleString()}</td>
+                                                <td className="p-2">{new Date(order.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 <td className="p-2">
                                                     <Link href={`/orders/${order.id}`}>
                                                         <Button variant="ghost" size="icon" title={t('common.view')}>

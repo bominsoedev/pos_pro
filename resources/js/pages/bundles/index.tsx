@@ -43,7 +43,7 @@ interface BundlesPageProps {
 }
 
 export default function BundlesIndex({ bundles }: BundlesPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const handleDelete = (bundleId: number) => {
         if (confirm(t('bundles.delete_confirm'))) {
@@ -106,12 +106,12 @@ export default function BundlesIndex({ bundles }: BundlesPageProps) {
                                             )}
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">{t('bundles.bundle_price')}:</span>
-                                                <span className="font-medium">{formatCurrency(bundle.bundle_price)}</span>
+                                                <span className="font-medium">{formatCurrency(bundle.bundle_price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                             </div>
                                             {bundle.savings > 0 && (
                                                 <div className="flex justify-between text-green-600">
                                                     <span>{t('bundles.savings')}:</span>
-                                                    <span className="font-medium">{formatCurrency(bundle.savings)}</span>
+                                                    <span className="font-medium">{formatCurrency(bundle.savings, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                                 </div>
                                             )}
                                             <div className="pt-2 border-t">

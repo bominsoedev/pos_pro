@@ -11,6 +11,7 @@ import { Form } from '@inertiajs/react';
 import { Eye, EyeOff, LockKeyhole, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import AlertError from './alert-error';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface TwoFactorRecoveryCodesProps {
     recoveryCodesList: string[];
@@ -57,11 +58,10 @@ export default function TwoFactorRecoveryCodes({
             <CardHeader>
                 <CardTitle className="flex gap-3">
                     <LockKeyhole className="size-4" aria-hidden="true" />
-                    2FA Recovery Codes
+                    {t('settings.two_factor.recovery_codes_title')}
                 </CardTitle>
                 <CardDescription>
-                    Recovery codes let you regain access if you lose your 2FA
-                    device. Store them in a secure password manager.
+                    {t('settings.two_factor.recovery_codes_description')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -76,7 +76,7 @@ export default function TwoFactorRecoveryCodes({
                             className="size-4"
                             aria-hidden="true"
                         />
-                        {codesAreVisible ? 'Hide' : 'View'} Recovery Codes
+                        {codesAreVisible ? t('settings.two_factor.hide_recovery_codes') : t('settings.two_factor.view_recovery_codes')}
                     </Button>
 
                     {canRegenerateCodes && (
@@ -92,7 +92,7 @@ export default function TwoFactorRecoveryCodes({
                                     disabled={processing}
                                     aria-describedby="regenerate-warning"
                                 >
-                                    <RefreshCw /> Regenerate Codes
+                                    <RefreshCw /> {t('settings.two_factor.regenerate_recovery_codes')}
                                 </Button>
                             )}
                         </Form>
@@ -112,7 +112,7 @@ export default function TwoFactorRecoveryCodes({
                                     ref={codesSectionRef}
                                     className="grid gap-1 rounded-lg bg-muted p-4 font-mono text-sm"
                                     role="list"
-                                    aria-label="Recovery codes"
+                                    aria-label={t('settings.two_factor.recovery_codes')}
                                 >
                                     {recoveryCodesList.length ? (
                                         recoveryCodesList.map((code, index) => (
@@ -127,7 +127,7 @@ export default function TwoFactorRecoveryCodes({
                                     ) : (
                                         <div
                                             className="space-y-2"
-                                            aria-label="Loading recovery codes"
+                                            aria-label={t('settings.two_factor.loading_recovery_codes')}
                                         >
                                             {Array.from(
                                                 { length: 8 },
@@ -149,7 +149,7 @@ export default function TwoFactorRecoveryCodes({
                                         access your account and will be removed
                                         after use. If you need more, click{' '}
                                         <span className="font-bold">
-                                            Regenerate Codes
+                                            {t('settings.two_factor.regenerate_recovery_codes')}
                                         </span>{' '}
                                         above.
                                     </p>

@@ -54,8 +54,8 @@ interface ReceiptProps {
 }
 
 export default function Receipt({ order, settings }: ReceiptProps) {
-    const { t } = useTranslation();
-    const storeName = settings?.store_name || '24 HOUR STORE';
+    const { t, currentLanguage } = useTranslation();
+    const storeName = settings?.store_name || t('receipt.default_store_name');
     const storeAddress = settings?.store_address || '';
     const storePhone = settings?.store_phone || '';
     const receiptHeader = settings?.receipt_header || t('receipt.default_header');
@@ -69,9 +69,8 @@ export default function Receipt({ order, settings }: ReceiptProps) {
         };
     }, []);
 
-
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleString('en-US', {
+        return new Date(date).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -169,14 +168,14 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                                                 <div className="font-medium">{item.product_name}</div>
                                                 {item.discount > 0 && (
                                                     <div className="text-xs text-red-600">
-                                                        {t('receipt.discount')}: {formatCurrency(item.discount)}
+                                                        {t('receipt.discount')}: {formatCurrency(item.discount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                     </div>
                                                 )}
                                             </div>
                                         </td>
                                         <td className="text-right py-2">{item.quantity}</td>
-                                        <td className="text-right py-2">{formatCurrency(item.price)}</td>
-                                        <td className="text-right py-2 font-semibold">{formatCurrency(item.total)}</td>
+                                        <td className="text-right py-2">{formatCurrency(item.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
+                                        <td className="text-right py-2 font-semibold">{formatCurrency(item.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -187,23 +186,23 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                     <div className="mb-4 space-y-2 text-sm">
                         <div className="flex justify-between">
                             <span>{t('receipt.subtotal')}:</span>
-                            <span>{formatCurrency(order.subtotal)}</span>
+                            <span>{formatCurrency(order.subtotal, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                         </div>
                         {order.tax_amount > 0 && settings?.receipt_show_tax_details && (
                             <div className="flex justify-between">
                                 <span>{t('receipt.tax')}:</span>
-                                <span>{formatCurrency(order.tax_amount)}</span>
+                                <span>{formatCurrency(order.tax_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                         )}
                         {order.discount_amount > 0 && (
                             <div className="flex justify-between text-red-600">
                                 <span>{t('receipt.discount')}:</span>
-                                <span>-{formatCurrency(order.discount_amount)}</span>
+                                <span>-{formatCurrency(order.discount_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                         )}
                         <div className="flex justify-between text-lg font-bold border-t pt-2 mt-2">
                             <span>{t('receipt.total')}:</span>
-                            <span>{formatCurrency(order.total)}</span>
+                            <span>{formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                         </div>
                     </div>
 
@@ -213,7 +212,7 @@ export default function Receipt({ order, settings }: ReceiptProps) {
                             {order.payments.map((payment) => (
                                 <div key={payment.id} className="flex justify-between">
                                     <span className="capitalize">{t('receipt.payment_method')}:</span>
-                                    <span className="font-semibold">{formatCurrency(payment.amount)}</span>
+                                    <span className="font-semibold">{formatCurrency(payment.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             ))}
                         </div>

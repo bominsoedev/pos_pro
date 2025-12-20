@@ -42,7 +42,7 @@ interface PurchaseOrderItem {
 }
 
 export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrderCreateProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [items, setItems] = useState<PurchaseOrderItem[]>([]);
     const [productSearch, setProductSearch] = useState('');
     const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
@@ -249,7 +249,7 @@ export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrd
                                                             <p className="text-sm text-muted-foreground">{product.sku}</p>
                                                         )}
                                                     </div>
-                                                    <Badge>{formatCurrency(product.price)}</Badge>
+                                                    <Badge>{formatCurrency(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</Badge>
                                                 </button>
                                             ))}
                                         </div>
@@ -312,7 +312,7 @@ export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrd
                                                         <div>
                                                             <Label className="text-xs">{t('pos.total')}</Label>
                                                             <Input
-                                                                value={formatCurrency(item.total)}
+                                                                value={formatCurrency(item.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                                 disabled
                                                                 className="font-semibold"
                                                             />
@@ -375,20 +375,20 @@ export default function PurchaseOrderCreate({ suppliers, products }: PurchaseOrd
                             <CardContent className="space-y-2">
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('pos.subtotal')}</span>
-                                    <span>{formatCurrency(subtotal)}</span>
+                                    <span>{formatCurrency(subtotal, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('pos.tax')}</span>
-                                    <span>{formatCurrency(tax)}</span>
+                                    <span>{formatCurrency(tax, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('pos.discount')}</span>
-                                    <span className="text-destructive">-{formatCurrency(discount)}</span>
+                                    <span className="text-destructive">-{formatCurrency(discount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                                 <div className="border-t pt-2 mt-2">
                                     <div className="flex justify-between font-bold text-lg">
                                         <span>{t('pos.total')}</span>
-                                        <span>{formatCurrency(total)}</span>
+                                        <span>{formatCurrency(total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                 </div>
                             </CardContent>

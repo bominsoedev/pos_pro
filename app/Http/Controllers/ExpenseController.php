@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use App\Services\AccountingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -63,6 +64,14 @@ class ExpenseController extends Controller
             'user_id' => auth()->id(),
             ...$validated,
         ]);
+
+        // Create accounting journal entry for the expense
+        try {
+            $accountingService = new AccountingService();
+            $accountingService->createExpenseEntry($expense);
+        } catch (\Exception $e) {
+            \Log::error('Failed to create accounting entry for expense: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Expense created successfully.');
     }

@@ -46,7 +46,7 @@ interface ShiftsPageProps {
 }
 
 export default function ShiftsIndex({ shifts, currentShift, filters }: ShiftsPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showOpenDialog, setShowOpenDialog] = useState(false);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
 
@@ -132,11 +132,11 @@ export default function ShiftsIndex({ shifts, currentShift, filters }: ShiftsPag
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('shifts.opening_cash')}</p>
-                                    <p className="text-lg font-bold">{formatCurrency(currentShift.opening_cash)}</p>
+                                    <p className="text-lg font-bold">{formatCurrency(currentShift.opening_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('reports.total_sales')}</p>
-                                    <p className="text-lg font-bold">{formatCurrency(currentShift.total_sales)}</p>
+                                    <p className="text-lg font-bold">{formatCurrency(currentShift.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('reports.total_orders')}</p>
@@ -145,7 +145,7 @@ export default function ShiftsIndex({ shifts, currentShift, filters }: ShiftsPag
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('shifts.opened_at')}</p>
                                     <p className="text-sm font-medium">
-                                        {new Date(currentShift.opened_at).toLocaleString()}
+                                        {new Date(currentShift.opened_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                     </p>
                                 </div>
                             </div>
@@ -239,19 +239,19 @@ export default function ShiftsIndex({ shifts, currentShift, filters }: ShiftsPag
                                                 </Badge>
                                             </td>
                                             <td className="p-2 text-sm">
-                                                {new Date(shift.opened_at).toLocaleString()}
+                                                {new Date(shift.opened_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                             </td>
                                             <td className="p-2 text-sm">
-                                                {shift.closed_at ? new Date(shift.closed_at).toLocaleString() : '-'}
+                                                {shift.closed_at ? new Date(shift.closed_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US') : '-'}
                                             </td>
                                             <td className="p-2 text-right font-medium">
-                                                {formatCurrency(shift.total_sales)}
+                                                {formatCurrency(shift.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                             </td>
                                             <td className="p-2 text-right">{shift.total_orders}</td>
                                             <td className="p-2 text-right">
                                                 {shift.cash_difference !== null ? (
                                                     <span className={shift.cash_difference >= 0 ? 'text-green-600' : 'text-red-600'}>
-                                                        {shift.cash_difference >= 0 ? '+' : ''}{formatCurrency(shift.cash_difference)}
+                                                        {shift.cash_difference >= 0 ? '+' : ''}{formatCurrency(shift.cash_difference, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                     </span>
                                                 ) : (
                                                     '-'
@@ -332,16 +332,16 @@ export default function ShiftsIndex({ shifts, currentShift, filters }: ShiftsPag
                                 <div className="p-4 bg-muted rounded-lg space-y-2">
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">{t('shifts.opening_cash')}:</span>
-                                        <span className="font-medium">{formatCurrency(currentShift.opening_cash)}</span>
+                                        <span className="font-medium">{formatCurrency(currentShift.opening_cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">{t('reports.total_sales')}:</span>
-                                        <span className="font-medium">{formatCurrency(currentShift.total_sales)}</span>
+                                        <span className="font-medium">{formatCurrency(currentShift.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                     <div className="flex justify-between border-t pt-2">
                                         <span className="text-sm font-medium">{t('shifts.expected_cash')}:</span>
                                         <span className="font-bold">
-                                            {formatCurrency((currentShift.expected_cash || currentShift.opening_cash + currentShift.total_sales))}
+                                            {formatCurrency((currentShift.expected_cash || currentShift.opening_cash + currentShift.total_sales), currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </span>
                                     </div>
                                 </div>

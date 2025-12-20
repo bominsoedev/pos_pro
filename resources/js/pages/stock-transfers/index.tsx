@@ -42,7 +42,7 @@ interface StockTransfersPageProps {
 }
 
 export default function StockTransfersIndex({ transfers, filters }: StockTransfersPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const debouncedSearch = useDebounce(searchInput, 500);
@@ -140,9 +140,9 @@ export default function StockTransfersIndex({ transfers, filters }: StockTransfe
                                                     <div className="mt-2 text-sm text-muted-foreground">
                                                         <p>{t('stock_transfers.from_location')}: {transfer.fromWay.name}</p>
                                                         <p>{t('stock_transfers.to_location')}: {transfer.toWay.name}</p>
-                                                        <p>{t('stock_transfers.transfer_date')}: {new Date(transfer.transfer_date).toLocaleDateString()}</p>
+                                                        <p>{t('stock_transfers.transfer_date')}: {new Date(transfer.transfer_date).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                         {transfer.expected_date && (
-                                                            <p>{t('stock_transfers.expected_date')}: {new Date(transfer.expected_date).toLocaleDateString()}</p>
+                                                            <p>{t('stock_transfers.expected_date')}: {new Date(transfer.expected_date).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                         )}
                                                     </div>
                                                 </div>

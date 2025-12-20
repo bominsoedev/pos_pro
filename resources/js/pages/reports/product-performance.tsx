@@ -38,7 +38,7 @@ interface ProductPerformanceProps {
 }
 
 export default function ProductPerformance({ products, filters }: ProductPerformanceProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const handleDateChange = () => {
         const dateFrom = (document.getElementById('date_from') as HTMLInputElement)?.value;
         const dateTo = (document.getElementById('date_to') as HTMLInputElement)?.value;
@@ -184,11 +184,11 @@ export default function ProductPerformance({ products, filters }: ProductPerform
                                             <tr key={product.id} className="border-b hover:bg-muted/50">
                                                 <td className="p-2 font-medium">{product.name}</td>
                                                 <td className="p-2 text-sm text-muted-foreground">{product.sku || '-'}</td>
-                                                <td className="p-2 text-right">{formatCurrency(product.price)}</td>
+                                                <td className="p-2 text-right">{formatCurrency(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 <td className="p-2 text-right font-semibold">{product.total_sold}</td>
-                                                <td className="p-2 text-right font-bold">{formatCurrency(product.total_revenue)}</td>
+                                                <td className="p-2 text-right font-bold">{formatCurrency(product.total_revenue, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 <td className="p-2 text-right">{product.order_count}</td>
-                                                <td className="p-2 text-right">{formatCurrency(avgPerOrder)}</td>
+                                                <td className="p-2 text-right">{formatCurrency(avgPerOrder, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                             </tr>
                                         );
                                     })}

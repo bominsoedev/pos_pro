@@ -41,7 +41,7 @@ interface StockTransferShowProps {
 }
 
 export default function StockTransferShow({ transfer }: StockTransferShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [quantities, setQuantities] = useState<Record<number, number>>(
         transfer.items.reduce((acc, item) => {
             acc[item.id] = item.quantity_transferred || item.quantity_requested;
@@ -263,7 +263,7 @@ export default function StockTransferShow({ transfer }: StockTransferShowProps) 
                                 <p className="text-sm text-muted-foreground mb-1">{t('common.created_by')}</p>
                                 <p className="text-sm">{transfer.user.name}</p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    {new Date(transfer.created_at).toLocaleString()}
+                                    {new Date(transfer.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                 </p>
                             </div>
                             {transfer.approvedBy && (
@@ -272,7 +272,7 @@ export default function StockTransferShow({ transfer }: StockTransferShowProps) 
                                     <p className="text-sm">{transfer.approvedBy.name}</p>
                                     {transfer.approved_at && (
                                         <p className="text-xs text-muted-foreground mt-1">
-                                            {new Date(transfer.approved_at).toLocaleString()}
+                                            {new Date(transfer.approved_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </p>
                                     )}
                                 </div>

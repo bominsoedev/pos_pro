@@ -45,10 +45,10 @@ interface CashRegisterReportProps {
 }
 
 export default function CashRegisterReport({ date, payments, summary }: CashRegisterReportProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const formatTime = (date: string) => {
-        return new Date(date).toLocaleTimeString('en-US', {
+        return new Date(date).toLocaleTimeString(currentLanguage === 'my' ? 'my-MM' : 'en-US', {
             hour: '2-digit',
             minute: '2-digit',
         });
@@ -167,7 +167,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                             <Banknote className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(summary.cash)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(summary.cash, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
 
@@ -177,7 +177,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                             <CreditCard className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(summary.card)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(summary.card, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
 
@@ -187,7 +187,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                             <Smartphone className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(summary.mobile_payment)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(summary.mobile_payment, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
 
@@ -197,7 +197,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                             <Building2 className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(summary.bank_transfer)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(summary.bank_transfer, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
 
@@ -207,7 +207,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(summary.total)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(summary.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                         </CardContent>
                     </Card>
                 </div>
@@ -256,7 +256,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                                                     </Badge>
                                                 </td>
                                                 <td className="p-2 text-right font-bold">
-                                                    {formatCurrency(payment.amount)}
+                                                    {formatCurrency(payment.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                 </td>
                                             </tr>
                                         ))
@@ -271,7 +271,7 @@ export default function CashRegisterReport({ date, payments, summary }: CashRegi
                                 <tfoot>
                                     <tr className="border-t-2 font-bold">
                                         <td colSpan={5} className="p-2 text-right">{t('pos.total')}:</td>
-                                        <td className="p-2 text-right">{formatCurrency(summary.total)}</td>
+                                        <td className="p-2 text-right">{formatCurrency(summary.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                     </tr>
                                 </tfoot>
                             </table>

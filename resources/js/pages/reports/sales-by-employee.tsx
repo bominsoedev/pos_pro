@@ -29,7 +29,7 @@ export default function SalesByEmployeeReport({
     date_to,
     employees,
 }: SalesByEmployeeProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [dateFrom, setDateFrom] = useState(date_from);
     const [dateTo, setDateTo] = useState(date_to);
 
@@ -141,11 +141,11 @@ export default function SalesByEmployeeReport({
                                                     </div>
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">{t('pos.total')}</p>
-                                                        <p className="font-semibold text-lg">{formatCurrency(employee.total_sales)}</p>
+                                                        <p className="font-semibold text-lg">{formatCurrency(employee.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                     </div>
                                                     <div>
                                                         <p className="text-sm text-muted-foreground">{t('reports.avg_order')}</p>
-                                                        <p className="font-semibold">{formatCurrency(employee.average_order_value)}</p>
+                                                        <p className="font-semibold">{formatCurrency(employee.average_order_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -176,7 +176,7 @@ export default function SalesByEmployeeReport({
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('reports.total_sales')}</p>
                                     <p className="text-2xl font-bold text-primary">
-                                        {formatCurrency(employees.reduce((sum, e) => sum + e.total_sales, 0))}
+                                        {formatCurrency(employees.reduce((sum, e) => sum + e.total_sales, 0), currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                     </p>
                                 </div>
                             </div>

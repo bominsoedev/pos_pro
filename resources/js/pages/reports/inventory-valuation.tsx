@@ -34,7 +34,7 @@ export default function InventoryValuationReport({
     total_items,
     low_stock_items,
 }: InventoryValuationProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     return (
         <AppLayout breadcrumbs={[
@@ -89,7 +89,7 @@ export default function InventoryValuationReport({
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-primary">{formatCurrency(total_value)}</div>
+                            <div className="text-2xl font-bold text-primary">{formatCurrency(total_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">{t('reports.all_inventory')}</p>
                         </CardContent>
                     </Card>
@@ -122,7 +122,7 @@ export default function InventoryValuationReport({
                             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-red-600">{formatCurrency(low_stock_value)}</div>
+                            <div className="text-2xl font-bold text-red-600">{formatCurrency(low_stock_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">{t('reports.at_risk_value')}</p>
                         </CardContent>
                     </Card>
@@ -156,11 +156,11 @@ export default function InventoryValuationReport({
                                                         {product.sku && <p>{t('products.sku_label')}: {product.sku}</p>}
                                                         {product.category && <p>{t('reports.category')}: {product.category}</p>}
                                                         <p>{t('reports.stock')}: {product.stock_quantity} {t('reports.units')}</p>
-                                                        <p>{t('reports.cost')}: {formatCurrency(product.cost)} {t('reports.per_unit')}</p>
+                                                        <p>{t('reports.cost')}: {formatCurrency(product.cost, currentLanguage === 'my' ? 'my-MM' : 'en-US')} {t('reports.per_unit')}</p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="text-lg font-bold text-primary">{formatCurrency(product.total_value)}</p>
+                                                    <p className="text-lg font-bold text-primary">{formatCurrency(product.total_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                 </div>
                                             </div>
                                         </CardContent>

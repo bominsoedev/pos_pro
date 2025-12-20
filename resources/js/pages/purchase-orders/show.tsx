@@ -44,7 +44,7 @@ interface PurchaseOrderShowProps {
 }
 
 export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const { data, setData, patch, processing } = useForm({
         status: purchaseOrder.status,
     });
@@ -134,7 +134,7 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
                                     {purchaseOrder.expected_delivery_date && (
                                         <>
                                             <p className="text-sm text-muted-foreground mt-2">{t('purchase_orders.expected_delivery')}</p>
-                                            <p className="text-sm">{new Date(purchaseOrder.expected_delivery_date).toLocaleDateString()}</p>
+                                            <p className="text-sm">{new Date(purchaseOrder.expected_delivery_date).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                         </>
                                     )}
                                 </div>
@@ -166,9 +166,9 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
                                                         </div>
                                                     </td>
                                                     <td className="p-2 text-right">{item.quantity}</td>
-                                                    <td className="p-2 text-right">{formatCurrency(item.unit_cost)}</td>
-                                                    <td className="p-2 text-right">{formatCurrency(item.discount)}</td>
-                                                    <td className="p-2 text-right font-semibold">{formatCurrency(item.total)}</td>
+                                                    <td className="p-2 text-right">{formatCurrency(item.unit_cost, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
+                                                    <td className="p-2 text-right">{formatCurrency(item.discount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
+                                                    <td className="p-2 text-right font-semibold">{formatCurrency(item.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -200,24 +200,24 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
                         <CardContent className="space-y-2">
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('pos.subtotal')}</span>
-                                <span>{formatCurrency(purchaseOrder.subtotal)}</span>
+                                <span>{formatCurrency(purchaseOrder.subtotal, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             {purchaseOrder.tax_amount > 0 && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('pos.tax')}</span>
-                                    <span>{formatCurrency(purchaseOrder.tax_amount)}</span>
+                                    <span>{formatCurrency(purchaseOrder.tax_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                             {purchaseOrder.discount_amount > 0 && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('pos.discount')}</span>
-                                    <span className="text-destructive">-{formatCurrency(purchaseOrder.discount_amount)}</span>
+                                    <span className="text-destructive">-{formatCurrency(purchaseOrder.discount_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                             <div className="border-t pt-2 mt-2">
                                 <div className="flex justify-between font-bold text-lg">
                                     <span>{t('pos.total')}</span>
-                                    <span>{formatCurrency(purchaseOrder.total)}</span>
+                                    <span>{formatCurrency(purchaseOrder.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             </div>
                             <div className="pt-4 border-t">
@@ -227,7 +227,7 @@ export default function PurchaseOrderShow({ purchaseOrder }: PurchaseOrderShowPr
                                     <p className="text-sm">{purchaseOrder.user.name}</p>
                                 </div>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    {new Date(purchaseOrder.created_at).toLocaleString()}
+                                    {new Date(purchaseOrder.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                 </p>
                             </div>
                         </CardContent>

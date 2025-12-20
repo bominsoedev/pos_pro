@@ -57,7 +57,7 @@ interface RefundShowProps {
 }
 
 export default function RefundShow({ refund }: RefundShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const getStatusBadge = (status: string) => {
         const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -113,7 +113,7 @@ export default function RefundShow({ refund }: RefundShowProps) {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('refunds.amount')}:</span>
-                                <span className="font-medium">{formatCurrency(refund.amount)}</span>
+                                <span className="font-medium">{formatCurrency(refund.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t('refunds.status')}:</span>
@@ -156,7 +156,7 @@ export default function RefundShow({ refund }: RefundShowProps) {
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">{t('orders.total')}:</span>
-                                        <span className="font-medium">{formatCurrency(refund.order.total)}</span>
+                                        <span className="font-medium">{formatCurrency(refund.order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                     </div>
                                     {refund.order.customer && (
                                         <>
@@ -212,7 +212,7 @@ export default function RefundShow({ refund }: RefundShowProps) {
                                                     {item.product ? item.product.name : (item.orderItem?.product_name || '-')}
                                                 </td>
                                                 <td className="p-2">{item.quantity}</td>
-                                                <td className="p-2">{formatCurrency(item.amount)}</td>
+                                                <td className="p-2">{formatCurrency(item.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 {refund.items.some(i => i.reason) && (
                                                     <td className="p-2">{item.reason || '-'}</td>
                                                 )}

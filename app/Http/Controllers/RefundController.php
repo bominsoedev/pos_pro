@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Refund;
 use App\Models\RefundItem;
+use App\Services\AccountingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -103,6 +104,14 @@ class RefundController extends Controller
             }
 
             DB::commit();
+
+            // Create accounting journal entry for the refund
+            try {
+                $accountingService = new AccountingService();
+                $accountingService->createRefundEntry($refund);
+            } catch (\Exception $e) {
+                \Log::error('Failed to create accounting entry for refund: ' . $e->getMessage());
+            }
 
             return redirect()->back()->with('success', 'Refund processed successfully.');
         } catch (\Exception $e) {

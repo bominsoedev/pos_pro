@@ -37,7 +37,7 @@ interface GiftCardsPageProps {
 }
 
 export default function GiftCardsIndex({ giftCards, filters }: GiftCardsPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [searchInput, setSearchInput] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const debouncedSearch = useDebounce(searchInput, 500);
@@ -129,13 +129,13 @@ export default function GiftCardsIndex({ giftCards, filters }: GiftCardsPageProp
                                                         {getStatusBadge(giftCard.status)}
                                                     </div>
                                                     <div className="mt-2 text-sm text-muted-foreground">
-                                                        <p>{t('gift_cards.current_balance')}: {formatCurrency(giftCard.current_balance)}</p>
-                                                        <p>{t('gift_cards.initial_amount')}: {formatCurrency(giftCard.initial_amount)}</p>
+                                                        <p>{t('gift_cards.current_balance')}: {formatCurrency(giftCard.current_balance, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
+                                                        <p>{t('gift_cards.initial_amount')}: {formatCurrency(giftCard.initial_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                         {giftCard.customer && (
                                                             <p>{t('quotations.customer')}: {giftCard.customer.name}</p>
                                                         )}
                                                         {giftCard.expires_at && (
-                                                            <p>{t('gift_cards.expires_at')}: {new Date(giftCard.expires_at).toLocaleDateString()}</p>
+                                                            <p>{t('gift_cards.expires_at')}: {new Date(giftCard.expires_at).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                         )}
                                                     </div>
                                                 </div>

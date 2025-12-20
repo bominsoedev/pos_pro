@@ -40,7 +40,7 @@ interface DiscountsPageProps {
 }
 
 export default function DiscountsIndex({ discounts, filters }: DiscountsPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showDialog, setShowDialog] = useState(false);
     const [editingDiscount, setEditingDiscount] = useState<Discount | null>(null);
 
@@ -203,13 +203,13 @@ export default function DiscountsIndex({ discounts, filters }: DiscountsPageProp
                                         <span className="font-bold text-lg">
                                             {discount.type === 'percentage' 
                                                 ? `${discount.value}%` 
-                                                : formatPrice(discount.value)}
+                                                : formatPrice(discount.value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                         </span>
                                     </div>
                                     {discount.minimum_amount && (
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm text-muted-foreground">{t('discounts.min_amount')}:</span>
-                                            <span className="text-sm">{formatPrice(discount.minimum_amount)}</span>
+                                            <span className="text-sm">{formatPrice(discount.minimum_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                         </div>
                                     )}
                                     {discount.max_uses && (
@@ -223,10 +223,10 @@ export default function DiscountsIndex({ discounts, filters }: DiscountsPageProp
                                     {discount.valid_from || discount.valid_until ? (
                                         <div className="text-xs text-muted-foreground">
                                             {discount.valid_from && (
-                                                <div>{t('discounts.from')}: {new Date(discount.valid_from).toLocaleDateString()}</div>
+                                                <div>{t('discounts.from')}: {new Date(discount.valid_from).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                                             )}
                                             {discount.valid_until && (
-                                                <div>{t('discounts.until')}: {new Date(discount.valid_until).toLocaleDateString()}</div>
+                                                <div>{t('discounts.until')}: {new Date(discount.valid_until).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                                             )}
                                         </div>
                                     ) : null}
@@ -261,7 +261,7 @@ export default function DiscountsIndex({ discounts, filters }: DiscountsPageProp
                                         value={data.code}
                                         onChange={(e) => setData('code', e.target.value.toUpperCase())}
                                         required
-                                        placeholder="SAVE10"
+                                        placeholder={t('discounts.code_placeholder')}
                                     />
                                     {errors.code && <p className="text-sm text-destructive">{errors.code}</p>}
                                 </div>

@@ -1,9 +1,11 @@
 import AppLogoIcon from './app-logo-icon';
 import { usePage } from '@inertiajs/react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function AppLogo() {
+    const { t } = useTranslation();
     const { app_name } = usePage().props as any;
-    const displayName = app_name || 'Laravel Starter Kit';
+    const displayName = app_name || t('common.app_name');
     
     return (
         <>

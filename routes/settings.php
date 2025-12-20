@@ -28,4 +28,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('settings/pos', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.pos');
     Route::put('settings/pos', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.pos.update');
+    
+    Route::get('settings/features', [App\Http\Controllers\Settings\FeaturesController::class, 'index'])->name('settings.features');
+    Route::put('settings/features', [App\Http\Controllers\Settings\FeaturesController::class, 'update'])->name('settings.features.update');
 });

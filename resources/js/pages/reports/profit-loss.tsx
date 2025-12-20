@@ -33,7 +33,7 @@ export default function ProfitLossReport({
     net_margin,
     total_orders,
 }: ProfitLossReportProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [dateFrom, setDateFrom] = useState(date_from);
     const [dateTo, setDateTo] = useState(date_to);
 
@@ -120,7 +120,7 @@ export default function ProfitLossReport({
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600">{formatCurrency(revenue)}</div>
+                            <div className="text-2xl font-bold text-green-600">{formatCurrency(revenue, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">{total_orders} {t('reports.orders')}</p>
                         </CardContent>
                     </Card>
@@ -131,7 +131,7 @@ export default function ProfitLossReport({
                             <TrendingDown className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-red-600">{formatCurrency(cost_of_goods_sold)}</div>
+                            <div className="text-2xl font-bold text-red-600">{formatCurrency(cost_of_goods_sold, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">{t('reports.cost_of_goods_sold')}</p>
                         </CardContent>
                     </Card>
@@ -142,7 +142,7 @@ export default function ProfitLossReport({
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-blue-600">{formatCurrency(gross_profit)}</div>
+                            <div className="text-2xl font-bold text-blue-600">{formatCurrency(gross_profit, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">{gross_margin.toFixed(2)}% {t('reports.margin')}</p>
                         </CardContent>
                     </Card>
@@ -154,7 +154,7 @@ export default function ProfitLossReport({
                         </CardHeader>
                         <CardContent>
                             <div className={`text-2xl font-bold ${net_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {formatCurrency(net_profit)}
+                                {formatCurrency(net_profit, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                             </div>
                             <p className="text-xs text-muted-foreground">{net_margin.toFixed(2)}% {t('reports.margin')}</p>
                         </CardContent>
@@ -170,24 +170,24 @@ export default function ProfitLossReport({
                         <div className="space-y-4">
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="font-medium">{t('reports.revenue')}</span>
-                                <span className="font-semibold">{formatCurrency(revenue)}</span>
+                                <span className="font-semibold">{formatCurrency(revenue, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="text-muted-foreground">{t('reports.cost_of_goods_sold')}</span>
-                                <span className="text-red-600">-{formatCurrency(cost_of_goods_sold)}</span>
+                                <span className="text-red-600">-{formatCurrency(cost_of_goods_sold, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             <div className="flex justify-between items-center border-b-2 pb-2 font-semibold">
                                 <span>{t('reports.gross_profit')}</span>
-                                <span className="text-blue-600">{formatCurrency(gross_profit)} ({gross_margin.toFixed(2)}%)</span>
+                                <span className="text-blue-600">{formatCurrency(gross_profit, currentLanguage === 'my' ? 'my-MM' : 'en-US')} ({gross_margin.toFixed(2)}%)</span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="text-muted-foreground">{t('reports.expenses')}</span>
-                                <span className="text-red-600">-{formatCurrency(expenses)}</span>
+                                <span className="text-red-600">-{formatCurrency(expenses, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                             </div>
                             <div className="flex justify-between items-center pt-2 font-bold text-lg">
                                 <span>{t('reports.net_profit')}</span>
                                 <span className={net_profit >= 0 ? 'text-green-600' : 'text-red-600'}>
-                                    {formatCurrency(net_profit)} ({net_margin.toFixed(2)}%)
+                                    {formatCurrency(net_profit, currentLanguage === 'my' ? 'my-MM' : 'en-US')} ({net_margin.toFixed(2)}%)
                                 </span>
                             </div>
                         </div>

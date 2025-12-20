@@ -65,6 +65,22 @@ class HandleInertiaRequests extends Middleware
                 'code' => $currentWay->code,
             ] : null,
             'ways' => $activeWays,
+            'features' => $this->getFeatures(),
         ];
+    }
+
+    /**
+     * Get all feature flags with database values taking priority over config.
+     */
+    private function getFeatures(): array
+    {
+        $configFeatures = config('features', []);
+        $features = [];
+
+        foreach ($configFeatures as $feature => $defaultValue) {
+            $features[$feature] = feature_enabled($feature);
+        }
+
+        return $features;
     }
 }

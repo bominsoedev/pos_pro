@@ -42,12 +42,15 @@ import {
     DollarSign,
     History,
     Layers,
-    Star
+    Star,
+    Calculator
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { LanguageSwitcher } from './language-switcher';
+import { usePage } from '@inertiajs/react';
 
-const getMainNavItems = (t: (key: string) => string): NavItem[] => [
+const getMainNavItems = (t: (key: string) => string, features: Record<string, boolean> = {}): NavItem[] => {
+    const items: NavItem[] = [
     {
         title: t('nav.dashboard'),
         href: dashboard(),
@@ -63,11 +66,11 @@ const getMainNavItems = (t: (key: string) => string): NavItem[] => [
         href: '/products',
         icon: Package,
     },
-    {
+    ...(features.bundles !== false ? [{
         title: t('nav.bundles'),
         href: '/bundles',
         icon: Layers,
-    },
+    }] : []),
     {
         title: t('nav.categories'),
         href: '/categories',
@@ -78,11 +81,11 @@ const getMainNavItems = (t: (key: string) => string): NavItem[] => [
         href: '/customers',
         icon: Users,
     },
-    {
+    ...(features.loyalty !== false ? [{
         title: t('nav.loyalty'),
         href: '/loyalty',
         icon: Star,
-    },
+    }] : []),
     {
         title: t('nav.orders'),
         href: '/orders',
@@ -108,73 +111,83 @@ const getMainNavItems = (t: (key: string) => string): NavItem[] => [
         href: '/shifts',
         icon: Clock,
     },
-    {
+    ...(features.roles !== false ? [{
         title: t('nav.roles'),
         href: '/roles',
         icon: Shield,
-    },
-    {
+    }] : []),
+    ...(features.backup !== false ? [{
         title: t('nav.backup'),
         href: '/backup',
         icon: Database,
-    },
-    {
+    }] : []),
+    ...(features.suppliers !== false ? [{
         title: t('nav.suppliers'),
         href: '/suppliers',
         icon: Truck,
-    },
-    {
+    }] : []),
+    ...(features.purchase_orders !== false ? [{
         title: t('nav.purchase_orders'),
         href: '/purchase-orders',
         icon: ShoppingBag,
-    },
-    {
+    }] : []),
+    ...(features.expenses !== false ? [{
         title: t('nav.expenses'),
         href: '/expenses',
         icon: ReceiptText,
-    },
-    {
+    }] : []),
+    ...(features.tax_rates !== false ? [{
         title: t('nav.tax_rates'),
         href: '/tax-rates',
         icon: PercentCircle,
-    },
-    {
+    }] : []),
+    ...(features.ways !== false ? [{
         title: t('nav.ways'),
         href: '/ways',
         icon: MapPin,
-    },
-    {
+    }] : []),
+    ...(features.quotations !== false ? [{
         title: t('nav.quotations'),
         href: '/quotations',
         icon: FileText,
-    },
-    {
+    }] : []),
+    ...(features.stock_transfers !== false ? [{
         title: t('nav.stock_transfers'),
         href: '/stock-transfers',
         icon: ArrowLeftRight,
-    },
-    {
+    }] : []),
+    ...(features.gift_cards !== false ? [{
         title: t('nav.gift_cards'),
         href: '/gift-cards',
         icon: Gift,
-    },
-    {
+    }] : []),
+    ...(features.currencies !== false ? [{
         title: t('nav.currencies'),
         href: '/currencies',
         icon: DollarSign,
-    },
-    {
+    }] : []),
+    ...(features.activity_logs !== false ? [{
         title: t('nav.activity_logs'),
         href: '/activity-logs',
         icon: History,
-    },
-];
+    }] : []),
+    ...(features.accounting !== false ? [{
+        title: t('nav.accounting'),
+        href: '/accounting/dashboard',
+        icon: Calculator,
+    }] : []),
+    ];
+    
+    return items;
+};
 
  
 
 export function AppSidebar() {
     const { t, currentLanguage } = useTranslation();
-    const mainNavItems = useMemo(() => getMainNavItems(t), [t, currentLanguage]);
+    const page = usePage();
+    const features = (page.props as any)?.features || {};
+    const mainNavItems = useMemo(() => getMainNavItems(t, features), [t, currentLanguage, features]);
 
     return (
         <Sidebar collapsible="icon" variant="inset">

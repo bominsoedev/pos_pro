@@ -38,7 +38,7 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ query, results }: SearchResultsProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const totalResults = results.products.length + results.customers.length + 
                      results.orders.length + results.categories.length;
 
@@ -86,7 +86,7 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                                                         </Badge>
                                                     )}
                                                 </div>
-                                                <p className="font-bold ml-4">{formatCurrency(product.price)}</p>
+                                                <p className="font-bold ml-4">{formatCurrency(product.price, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             </div>
                                         </Link>
                                     ))}
@@ -150,7 +150,7 @@ export default function SearchResults({ query, results }: SearchResultsProps) {
                                                         <p className="text-sm text-muted-foreground">{order.customer.name}</p>
                                                     )}
                                                 </div>
-                                                <p className="font-bold ml-4">{formatCurrency(order.total)}</p>
+                                                <p className="font-bold ml-4">{formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                             </div>
                                         </Link>
                                     ))}

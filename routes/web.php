@@ -35,19 +35,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('variant-options/{option}', [App\Http\Controllers\ProductVariantController::class, 'destroyOption'])->name('variant-options.destroy');
     
     // Product Bundles
-    Route::resource('bundles', App\Http\Controllers\BundleController::class);
+    if (feature_enabled('bundles')) {
+        Route::resource('bundles', App\Http\Controllers\BundleController::class);
+    }
     
     // Search
     Route::get('search', [App\Http\Controllers\SearchController::class, 'global'])->name('search');
     Route::get('search/quick', [App\Http\Controllers\SearchController::class, 'quick'])->name('search.quick');
     
     // Backup & Restore
-    Route::get('backup', [App\Http\Controllers\BackupController::class, 'index'])->name('backup.index');
-    Route::post('backup/create', [App\Http\Controllers\BackupController::class, 'create'])->name('backup.create');
-    Route::post('backup/restore', [App\Http\Controllers\BackupController::class, 'restore'])->name('backup.restore');
-    Route::get('backup/{filename}/download', [App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
-    Route::delete('backup/{filename}', [App\Http\Controllers\BackupController::class, 'destroy'])->name('backup.destroy');
-    Route::get('backup/export', [App\Http\Controllers\BackupController::class, 'exportData'])->name('backup.export');
+    if (feature_enabled('backup')) {
+        Route::get('backup', [App\Http\Controllers\BackupController::class, 'index'])->name('backup.index');
+        Route::post('backup/create', [App\Http\Controllers\BackupController::class, 'create'])->name('backup.create');
+        Route::post('backup/restore', [App\Http\Controllers\BackupController::class, 'restore'])->name('backup.restore');
+        Route::get('backup/{filename}/download', [App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
+        Route::delete('backup/{filename}', [App\Http\Controllers\BackupController::class, 'destroy'])->name('backup.destroy');
+        Route::get('backup/export', [App\Http\Controllers\BackupController::class, 'exportData'])->name('backup.export');
+    }
     
     // Barcodes
     Route::get('products/{product}/barcode', [App\Http\Controllers\BarcodeController::class, 'generate'])->name('products.barcode');
@@ -93,7 +97,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('discounts/validate', [App\Http\Controllers\DiscountController::class, 'validate'])->name('discounts.validate');
     
     // Roles & Permissions
-    Route::resource('roles', App\Http\Controllers\RoleController::class);
+    if (feature_enabled('roles')) {
+        Route::resource('roles', App\Http\Controllers\RoleController::class);
+    }
     
     // Shifts
     Route::get('shifts', [App\Http\Controllers\ShiftController::class, 'index'])->name('shifts.index');
@@ -103,9 +109,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('shifts/{shift}', [App\Http\Controllers\ShiftController::class, 'show'])->name('shifts.show');
     
     // Loyalty
-    Route::get('loyalty', [App\Http\Controllers\LoyaltyController::class, 'index'])->name('loyalty.index');
-    Route::get('loyalty/{customer}', [App\Http\Controllers\LoyaltyController::class, 'show'])->name('loyalty.show');
-    Route::post('loyalty/{customer}/adjust', [App\Http\Controllers\LoyaltyController::class, 'adjustPoints'])->name('loyalty.adjust');
+    if (feature_enabled('loyalty')) {
+        Route::get('loyalty', [App\Http\Controllers\LoyaltyController::class, 'index'])->name('loyalty.index');
+        Route::get('loyalty/{customer}', [App\Http\Controllers\LoyaltyController::class, 'show'])->name('loyalty.show');
+        Route::post('loyalty/{customer}/adjust', [App\Http\Controllers\LoyaltyController::class, 'adjustPoints'])->name('loyalty.adjust');
+    }
     
     // Image Upload
     Route::post('images/upload', [App\Http\Controllers\ImageController::class, 'upload'])->name('images.upload');
@@ -119,39 +127,140 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('export/yearly-report', [App\Http\Controllers\ExportController::class, 'yearlyReportCsv'])->name('export.yearly-report');
     Route::get('export/cash-register', [App\Http\Controllers\ExportController::class, 'cashRegisterCsv'])->name('export.cash-register');
     
-    // Business Features
-    Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
-    Route::get('purchase-orders/create', [App\Http\Controllers\PurchaseOrderController::class, 'create'])->name('purchase-orders.create');
-    Route::resource('purchase-orders', App\Http\Controllers\PurchaseOrderController::class)->except(['edit', 'update', 'create']);
-    Route::patch('purchase-orders/{purchaseOrder}/status', [App\Http\Controllers\PurchaseOrderController::class, 'updateStatus'])->name('purchase-orders.update-status');
-    Route::resource('expenses', App\Http\Controllers\ExpenseController::class);
-    Route::resource('tax-rates', App\Http\Controllers\TaxRateController::class);
+    // Business Features (conditionally enabled)
+    if (feature_enabled('suppliers')) {
+        Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
+    }
+    
+    if (feature_enabled('purchase_orders')) {
+        Route::get('purchase-orders/create', [App\Http\Controllers\PurchaseOrderController::class, 'create'])->name('purchase-orders.create');
+        Route::resource('purchase-orders', App\Http\Controllers\PurchaseOrderController::class)->except(['edit', 'update', 'create']);
+        Route::patch('purchase-orders/{purchaseOrder}/status', [App\Http\Controllers\PurchaseOrderController::class, 'updateStatus'])->name('purchase-orders.update-status');
+    }
+    
+    if (feature_enabled('expenses')) {
+        Route::resource('expenses', App\Http\Controllers\ExpenseController::class);
+    }
+    
+    if (feature_enabled('tax_rates')) {
+        Route::resource('tax-rates', App\Http\Controllers\TaxRateController::class);
+    }
     
     // Ways
-    Route::resource('ways', App\Http\Controllers\WayController::class);
-    Route::get('ways/list', [App\Http\Controllers\WayController::class, 'list'])->name('ways.list');
-    Route::post('ways/set-current', [App\Http\Controllers\WayController::class, 'setCurrent'])->name('ways.set-current');
+    if (feature_enabled('ways')) {
+        Route::resource('ways', App\Http\Controllers\WayController::class);
+        Route::get('ways/list', [App\Http\Controllers\WayController::class, 'list'])->name('ways.list');
+        Route::post('ways/set-current', [App\Http\Controllers\WayController::class, 'setCurrent'])->name('ways.set-current');
+    }
     
     // Quotations
-    Route::resource('quotations', App\Http\Controllers\QuotationController::class);
-    Route::post('quotations/{quotation}/send', [App\Http\Controllers\QuotationController::class, 'send'])->name('quotations.send');
-    Route::post('quotations/{quotation}/convert', [App\Http\Controllers\QuotationController::class, 'convertToOrder'])->name('quotations.convert');
+    if (feature_enabled('quotations')) {
+        Route::resource('quotations', App\Http\Controllers\QuotationController::class);
+        Route::post('quotations/{quotation}/send', [App\Http\Controllers\QuotationController::class, 'send'])->name('quotations.send');
+        Route::post('quotations/{quotation}/convert', [App\Http\Controllers\QuotationController::class, 'convertToOrder'])->name('quotations.convert');
+    }
     
     // Stock Transfers
-    Route::resource('stock-transfers', App\Http\Controllers\StockTransferController::class);
-    Route::post('stock-transfers/{stockTransfer}/approve', [App\Http\Controllers\StockTransferController::class, 'approve'])->name('stock-transfers.approve');
-    Route::post('stock-transfers/{stockTransfer}/complete', [App\Http\Controllers\StockTransferController::class, 'complete'])->name('stock-transfers.complete');
+    if (feature_enabled('stock_transfers')) {
+        Route::resource('stock-transfers', App\Http\Controllers\StockTransferController::class);
+        Route::post('stock-transfers/{stockTransfer}/approve', [App\Http\Controllers\StockTransferController::class, 'approve'])->name('stock-transfers.approve');
+        Route::post('stock-transfers/{stockTransfer}/complete', [App\Http\Controllers\StockTransferController::class, 'complete'])->name('stock-transfers.complete');
+    }
     
     // Gift Cards
-    Route::resource('gift-cards', App\Http\Controllers\GiftCardController::class);
-    Route::post('gift-cards/{giftCard}/redeem', [App\Http\Controllers\GiftCardController::class, 'redeem'])->name('gift-cards.redeem');
+    if (feature_enabled('gift_cards')) {
+        Route::resource('gift-cards', App\Http\Controllers\GiftCardController::class);
+        Route::post('gift-cards/{giftCard}/redeem', [App\Http\Controllers\GiftCardController::class, 'redeem'])->name('gift-cards.redeem');
+    }
     
     // Currencies
-    Route::resource('currencies', App\Http\Controllers\CurrencyController::class);
-    Route::post('currencies/{currency}/set-default', [App\Http\Controllers\CurrencyController::class, 'setDefault'])->name('currencies.set-default');
+    if (feature_enabled('currencies')) {
+        Route::resource('currencies', App\Http\Controllers\CurrencyController::class);
+        Route::post('currencies/{currency}/set-default', [App\Http\Controllers\CurrencyController::class, 'setDefault'])->name('currencies.set-default');
+    }
     
     // Activity Logs
-    Route::get('activity-logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
+    if (feature_enabled('activity_logs')) {
+        Route::get('activity-logs', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
+    }
+    
+    // Accounting System
+    if (feature_enabled('accounting')) {
+        Route::prefix('accounting')->name('accounting.')->group(function () {
+            // Dashboard
+            Route::get('dashboard', [App\Http\Controllers\Accounting\DashboardController::class, 'index'])->name('dashboard');
+            
+            // Chart of Accounts
+            Route::resource('accounts', App\Http\Controllers\Accounting\AccountController::class);
+            
+            // Journal Entries
+            Route::get('journal-entries', [App\Http\Controllers\Accounting\JournalEntryController::class, 'index'])->name('journal-entries.index');
+            Route::get('journal-entries/create', [App\Http\Controllers\Accounting\JournalEntryController::class, 'create'])->name('journal-entries.create');
+            Route::post('journal-entries', [App\Http\Controllers\Accounting\JournalEntryController::class, 'store'])->name('journal-entries.store');
+            Route::get('journal-entries/{journalEntry}', [App\Http\Controllers\Accounting\JournalEntryController::class, 'show'])->name('journal-entries.show');
+            Route::post('journal-entries/{journalEntry}/post', [App\Http\Controllers\Accounting\JournalEntryController::class, 'post'])->name('journal-entries.post');
+            Route::post('journal-entries/{journalEntry}/void', [App\Http\Controllers\Accounting\JournalEntryController::class, 'void'])->name('journal-entries.void');
+            Route::post('journal-entries/{journalEntry}/reverse', [App\Http\Controllers\Accounting\JournalEntryController::class, 'reverse'])->name('journal-entries.reverse');
+            
+            // Recurring Journal Entries
+            Route::get('recurring-entries', [App\Http\Controllers\Accounting\RecurringEntryController::class, 'index'])->name('recurring-entries.index');
+            Route::get('recurring-entries/create', [App\Http\Controllers\Accounting\RecurringEntryController::class, 'create'])->name('recurring-entries.create');
+            Route::post('recurring-entries', [App\Http\Controllers\Accounting\RecurringEntryController::class, 'store'])->name('recurring-entries.store');
+            Route::get('recurring-entries/{recurringEntry}', [App\Http\Controllers\Accounting\RecurringEntryController::class, 'show'])->name('recurring-entries.show');
+            Route::post('recurring-entries/{recurringEntry}/toggle', [App\Http\Controllers\Accounting\RecurringEntryController::class, 'toggle'])->name('recurring-entries.toggle');
+            Route::post('recurring-entries/{recurringEntry}/run', [App\Http\Controllers\Accounting\RecurringEntryController::class, 'runNow'])->name('recurring-entries.run');
+            Route::delete('recurring-entries/{recurringEntry}', [App\Http\Controllers\Accounting\RecurringEntryController::class, 'destroy'])->name('recurring-entries.destroy');
+            
+            // General Ledger
+            Route::get('general-ledger', [App\Http\Controllers\Accounting\GeneralLedgerController::class, 'index'])->name('general-ledger.index');
+            Route::get('trial-balance', [App\Http\Controllers\Accounting\GeneralLedgerController::class, 'trialBalance'])->name('trial-balance');
+            
+            // Financial Reports
+            Route::get('reports/balance-sheet', [App\Http\Controllers\Accounting\FinancialReportController::class, 'balanceSheet'])->name('reports.balance-sheet');
+            Route::get('reports/income-statement', [App\Http\Controllers\Accounting\FinancialReportController::class, 'incomeStatement'])->name('reports.income-statement');
+            Route::get('reports/cash-flow', [App\Http\Controllers\Accounting\FinancialReportController::class, 'cashFlow'])->name('reports.cash-flow');
+            Route::get('reports/ratios', [App\Http\Controllers\Accounting\RatiosController::class, 'index'])->name('reports.ratios');
+            
+            // Fiscal Years
+            Route::get('fiscal-years', [App\Http\Controllers\Accounting\FiscalYearController::class, 'index'])->name('fiscal-years.index');
+            Route::get('fiscal-years/create', [App\Http\Controllers\Accounting\FiscalYearController::class, 'create'])->name('fiscal-years.create');
+            Route::post('fiscal-years', [App\Http\Controllers\Accounting\FiscalYearController::class, 'store'])->name('fiscal-years.store');
+            Route::get('fiscal-years/{fiscalYear}/close', [App\Http\Controllers\Accounting\FiscalYearController::class, 'close'])->name('fiscal-years.close');
+            Route::post('fiscal-years/{fiscalYear}/process-close', [App\Http\Controllers\Accounting\FiscalYearController::class, 'processClose'])->name('fiscal-years.process-close');
+            
+            // Statements
+            Route::get('statements/supplier', [App\Http\Controllers\Accounting\StatementController::class, 'supplier'])->name('statements.supplier');
+            Route::get('statements/customer', [App\Http\Controllers\Accounting\StatementController::class, 'customer'])->name('statements.customer');
+            
+            // Exports
+            Route::get('export/trial-balance', [App\Http\Controllers\Accounting\ExportController::class, 'trialBalanceCsv'])->name('export.trial-balance');
+            Route::get('export/balance-sheet', [App\Http\Controllers\Accounting\ExportController::class, 'balanceSheetCsv'])->name('export.balance-sheet');
+            Route::get('export/income-statement', [App\Http\Controllers\Accounting\ExportController::class, 'incomeStatementCsv'])->name('export.income-statement');
+            Route::get('export/general-ledger', [App\Http\Controllers\Accounting\ExportController::class, 'generalLedgerCsv'])->name('export.general-ledger');
+            Route::get('export/journal-entries', [App\Http\Controllers\Accounting\ExportController::class, 'journalEntriesCsv'])->name('export.journal-entries');
+            
+            // Bank Accounts & Reconciliation
+            Route::resource('bank-accounts', App\Http\Controllers\Accounting\BankAccountController::class);
+            Route::post('bank-accounts/{bankAccount}/import', [App\Http\Controllers\Accounting\BankAccountController::class, 'importTransactions'])->name('bank-accounts.import');
+            Route::get('bank-accounts/{bankAccount}/reconcile', [App\Http\Controllers\Accounting\BankAccountController::class, 'reconcile'])->name('bank-accounts.reconcile');
+            Route::post('bank-accounts/{bankAccount}/complete-reconciliation', [App\Http\Controllers\Accounting\BankAccountController::class, 'completeReconciliation'])->name('bank-accounts.complete-reconciliation');
+            
+            // Accounts Payable
+            Route::get('payables', [App\Http\Controllers\Accounting\PayableController::class, 'index'])->name('payables.index');
+            Route::get('payables/create', [App\Http\Controllers\Accounting\PayableController::class, 'create'])->name('payables.create');
+            Route::post('payables', [App\Http\Controllers\Accounting\PayableController::class, 'store'])->name('payables.store');
+            Route::get('payables/{payable}', [App\Http\Controllers\Accounting\PayableController::class, 'show'])->name('payables.show');
+            Route::post('payables/{payable}/payment', [App\Http\Controllers\Accounting\PayableController::class, 'recordPayment'])->name('payables.payment');
+            
+            // Accounts Receivable
+            Route::get('receivables', [App\Http\Controllers\Accounting\ReceivableController::class, 'index'])->name('receivables.index');
+            Route::get('receivables/create', [App\Http\Controllers\Accounting\ReceivableController::class, 'create'])->name('receivables.create');
+            Route::post('receivables', [App\Http\Controllers\Accounting\ReceivableController::class, 'store'])->name('receivables.store');
+            Route::get('receivables/{receivable}', [App\Http\Controllers\Accounting\ReceivableController::class, 'show'])->name('receivables.show');
+            Route::post('receivables/{receivable}/payment', [App\Http\Controllers\Accounting\ReceivableController::class, 'recordPayment'])->name('receivables.payment');
+            Route::post('receivables/{receivable}/bad-debt', [App\Http\Controllers\Accounting\ReceivableController::class, 'markAsBadDebt'])->name('receivables.bad-debt');
+        });
+    }
 });
 
 require __DIR__.'/settings.php';

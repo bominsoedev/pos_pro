@@ -35,7 +35,7 @@ interface OrdersPageProps {
 }
 
 export default function OrdersIndex({ orders, filters }: OrdersPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
 
     const getStatusBadge = (status: string) => {
         const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -188,9 +188,9 @@ export default function OrdersIndex({ orders, filters }: OrdersPageProps) {
                                                     {t(`orders.${order.payment_status}`)}
                                                 </Badge>
                                             </td>
-                                            <td className="p-2 text-right font-bold">{formatCurrency(order.total)}</td>
+                                            <td className="p-2 text-right font-bold">{formatCurrency(order.total, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                             <td className="p-2 text-sm text-muted-foreground">
-                                                {new Date(order.created_at).toLocaleDateString()}
+                                                {new Date(order.created_at).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                             </td>
                                             <td className="p-2 text-right">
                                                 <Button

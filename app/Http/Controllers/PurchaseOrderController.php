@@ -7,6 +7,7 @@ use App\Models\PurchaseOrderItem;
 use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\InventoryLog;
+use App\Services\AccountingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -174,6 +175,14 @@ class PurchaseOrderController extends Controller
                             'notes' => "Purchase Order: {$purchaseOrder->po_number}",
                         ]);
                     }
+                }
+
+                // Create accounting journal entry for the purchase
+                try {
+                    $accountingService = new AccountingService();
+                    $accountingService->createPurchaseEntry($purchaseOrder);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to create accounting entry for purchase order: ' . $e->getMessage());
                 }
             }
 

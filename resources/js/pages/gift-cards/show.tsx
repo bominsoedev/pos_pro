@@ -43,7 +43,7 @@ interface GiftCardShowProps {
 }
 
 export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showRedeemDialog, setShowRedeemDialog] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -126,11 +126,11 @@ export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('gift_cards.initial_amount')}</p>
-                                    <p className="font-semibold text-lg">{formatCurrency(giftCard.initial_amount)}</p>
+                                    <p className="font-semibold text-lg">{formatCurrency(giftCard.initial_amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">{t('gift_cards.current_balance')}</p>
-                                    <p className="font-semibold text-lg text-primary">{formatCurrency(giftCard.current_balance)}</p>
+                                    <p className="font-semibold text-lg text-primary">{formatCurrency(giftCard.current_balance, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                 </div>
                             </div>
 
@@ -162,7 +162,7 @@ export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
                                                     <div>
                                                         <p className="font-medium">{transaction.description || transaction.type}</p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            {new Date(transaction.created_at).toLocaleString()}
+                                                            {new Date(transaction.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                         </p>
                                                         {transaction.user && (
                                                             <p className="text-xs text-muted-foreground">
@@ -172,10 +172,10 @@ export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
                                                     </div>
                                                     <div className="text-right">
                                                         <p className={`font-semibold ${transaction.amount < 0 ? 'text-destructive' : 'text-primary'}`}>
-                                                            {transaction.amount < 0 ? '-' : '+'}{formatCurrency(Math.abs(transaction.amount))}
+                                                            {transaction.amount < 0 ? '-' : '+'}{formatCurrency(Math.abs(transaction.amount), currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                         </p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            {t('common.balance')}: {formatCurrency(transaction.balance_after)}
+                                                            {t('common.balance')}: {formatCurrency(transaction.balance_after, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -207,14 +207,14 @@ export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
                             {giftCard.expires_at && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">{t('gift_cards.expires_at')}</span>
-                                    <span>{new Date(giftCard.expires_at).toLocaleDateString()}</span>
+                                    <span>{new Date(giftCard.expires_at).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                 </div>
                             )}
                             <div className="pt-4 border-t">
                                 <p className="text-sm text-muted-foreground mb-1">{t('common.created_by')}</p>
                                 <p className="text-sm">{giftCard.purchasedBy.name}</p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    {new Date(giftCard.created_at).toLocaleString()}
+                                    {new Date(giftCard.created_at).toLocaleString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                 </p>
                             </div>
                         </CardContent>
@@ -227,7 +227,7 @@ export default function GiftCardShow({ giftCard }: GiftCardShowProps) {
                         <DialogHeader>
                             <DialogTitle>{t('gift_cards.redeem')}</DialogTitle>
                             <DialogDescription>
-                                {t('gift_cards.current_balance')}: {formatCurrency(giftCard.current_balance)}
+                                {t('gift_cards.current_balance')}: {formatCurrency(giftCard.current_balance, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                             </DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleRedeem}>

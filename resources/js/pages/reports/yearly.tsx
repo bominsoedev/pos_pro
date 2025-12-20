@@ -35,7 +35,7 @@ interface YearlyReportProps {
 }
 
 export default function YearlyReport({ year, stats, monthlyStats }: YearlyReportProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const handleYearChange = (newYear: number) => {
         router.get('/reports/yearly', { year: newYear }, {
             preserveState: true,
@@ -133,7 +133,7 @@ export default function YearlyReport({ year, stats, monthlyStats }: YearlyReport
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.total_sales)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {stats.total_orders} {t('reports.orders')}
                             </p>
@@ -159,7 +159,7 @@ export default function YearlyReport({ year, stats, monthlyStats }: YearlyReport
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(stats.average_order_value)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(stats.average_order_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</div>
                             <p className="text-xs text-muted-foreground">
                                 {t('reports.per_order')}
                             </p>
@@ -202,9 +202,9 @@ export default function YearlyReport({ year, stats, monthlyStats }: YearlyReport
                                         return (
                                             <tr key={month.month} className="border-b hover:bg-muted/50">
                                                 <td className="p-2 font-medium">{month.month_name}</td>
-                                                <td className="p-2 text-right font-bold">{formatCurrency(month.sales)}</td>
+                                                <td className="p-2 text-right font-bold">{formatCurrency(month.sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                                 <td className="p-2 text-right">{month.orders}</td>
-                                                <td className="p-2 text-right">{formatCurrency(avgOrder)}</td>
+                                                <td className="p-2 text-right">{formatCurrency(avgOrder, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                             </tr>
                                         );
                                     })}
@@ -212,9 +212,9 @@ export default function YearlyReport({ year, stats, monthlyStats }: YearlyReport
                                 <tfoot>
                                     <tr className="border-t-2 font-bold">
                                         <td className="p-2">{t('pos.total')}</td>
-                                        <td className="p-2 text-right">{formatCurrency(stats.total_sales)}</td>
+                                        <td className="p-2 text-right">{formatCurrency(stats.total_sales, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                         <td className="p-2 text-right">{stats.total_orders}</td>
-                                        <td className="p-2 text-right">{formatCurrency(stats.average_order_value)}</td>
+                                        <td className="p-2 text-right">{formatCurrency(stats.average_order_value, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</td>
                                     </tr>
                                 </tfoot>
                             </table>

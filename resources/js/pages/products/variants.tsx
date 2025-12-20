@@ -46,7 +46,7 @@ interface ProductVariantsProps {
 }
 
 export default function ProductVariants({ product, variants, optionGroups }: ProductVariantsProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showOptionDialog, setShowOptionDialog] = useState(false);
     const [showVariantDialog, setShowVariantDialog] = useState(false);
     const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);

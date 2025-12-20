@@ -47,7 +47,7 @@ interface ExpensesPageProps {
 }
 
 export default function ExpensesIndex({ expenses, categories, filters }: ExpensesPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showDialog, setShowDialog] = useState(false);
     const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
     const [searchInput, setSearchInput] = useState(filters.search || '');
@@ -239,11 +239,11 @@ export default function ExpensesIndex({ expenses, categories, filters }: Expense
                                         <div className="mt-2 space-y-1 text-sm text-muted-foreground">
                                             <div className="flex items-center gap-2">
                                                 <DollarSign className="h-4 w-4" />
-                                                <span className="font-semibold text-primary">{formatCurrency(expense.amount)}</span>
+                                                <span className="font-semibold text-primary">{formatCurrency(expense.amount, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="h-4 w-4" />
-                                                {new Date(expense.expense_date).toLocaleDateString()}
+                                                {new Date(expense.expense_date).toLocaleDateString(currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                             </div>
                                             <div>{getPaymentMethodLabel(expense.payment_method)}</div>
                                             {expense.description && (

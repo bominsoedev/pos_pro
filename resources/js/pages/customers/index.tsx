@@ -41,7 +41,7 @@ interface CustomersPageProps {
 }
 
 export default function CustomersIndex({ customers, filters }: CustomersPageProps) {
-    const { t } = useTranslation();
+    const { t, currentLanguage } = useTranslation();
     const [showDialog, setShowDialog] = useState(false);
     const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
 
@@ -191,7 +191,7 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                     <div className="flex items-center justify-between pt-2 border-t">
                                         <div>
                                             <p className="text-xs text-muted-foreground">{t('customers.total_spent')}</p>
-                                            <p className="font-bold">{formatCurrency(customer.total_spent)}</p>
+                                            <p className="font-bold">{formatCurrency(customer.total_spent, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-muted-foreground">{t('customers.total_orders')}</p>
@@ -203,12 +203,12 @@ export default function CustomersIndex({ customers, filters }: CustomersPageProp
                                             <div className="flex items-center justify-between">
                                                 <div>
                                                     <p className="text-xs text-muted-foreground">{t('customers.credit_limit')}</p>
-                                                    <p className="font-semibold">{formatCurrency(customer.credit_limit)}</p>
+                                                    <p className="font-semibold">{formatCurrency(customer.credit_limit, currentLanguage === 'my' ? 'my-MM' : 'en-US')}</p>
                                                 </div>
                                                 <div>
                                                     <p className="text-xs text-muted-foreground">{t('customers.credit_balance')}</p>
                                                     <p className={`font-semibold ${customer.credit_balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                                        {formatCurrency(customer.credit_balance)}
+                                                        {formatCurrency(customer.credit_balance, currentLanguage === 'my' ? 'my-MM' : 'en-US')}
                                                     </p>
                                                 </div>
                                             </div>
